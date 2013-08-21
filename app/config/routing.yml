@@ -1,0 +1,5 @@
+freifunk_json:
+    resource: "@FreifunkJsonBundle/Controller/"
+    type:     annotation
+    prefix:   /
+

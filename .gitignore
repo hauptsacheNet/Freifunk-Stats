@@ -1,6 +1,9 @@
 .idea
+cache.properties
+.vagrant
 /web/bundles/
 /app/bootstrap.php.cache
+/app/build
 /app/cache/*
 /app/config/parameters.yml
 /app/logs/*

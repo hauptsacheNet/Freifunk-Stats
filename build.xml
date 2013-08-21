@@ -26,6 +26,7 @@
         <delete dir="${basedir}/app/build/coverage"/>
         <delete dir="${basedir}/app/build/logs"/>
         <delete dir="${basedir}/app/build/pdepend"/>
+        <delete dir="${basedir}/app/build/phpdox"/>
     </target>
 
     <target name="prepare" depends="clean" description="Prepare for build">

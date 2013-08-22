@@ -1,6 +1,6 @@
 <?php
 /**
- * This is the getJsonCommandTest
+ * This is the GetJsonCommandTest
  *
  * It contains some basics tests to test the
  * freifunk:get-json command
@@ -19,13 +19,13 @@ use Freifunk\JsonBundle\Command\getJsonCommand;
 
 
 /**
- * Class getJsonCommandTest
+ * Class GetJsonCommandTest
  *
  * @category Test
  * @package  Freifunk\JsonBundle\Tests
  * @author   Frederik Schubert <frederik@ferdynator.de>
  */
-class getJsonCommandTest extends \PHPUnit_Framework_TestCase
+class GetJsonCommandTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -45,7 +45,7 @@ class getJsonCommandTest extends \PHPUnit_Framework_TestCase
             array('command' => $command->getName(), '--dir' => '/tmp/')
         );
 
-        $this->assertRegExp('/Json file saved to /', $commandTester->getDisplay());
+        $this->assertRegExp('/Json file saved./', $commandTester->getDisplay());
 
     }
 

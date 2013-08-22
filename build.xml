@@ -98,7 +98,7 @@
         <exec executable="phpcs" output="/dev/null">
             <arg value="--report=checkstyle" />
             <arg value="--report-file=${basedir}/app/build/logs/checkstyle.xml" />
-            <arg value="--standard=${basedir}/app/build/phpcs.xml" />
+            <arg value="--standard=Symfony2" />
             <arg path="${basedir}/src" />
         </exec>
     </target>

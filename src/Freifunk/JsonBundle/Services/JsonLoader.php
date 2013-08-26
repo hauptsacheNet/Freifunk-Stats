@@ -1,25 +1,41 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: frederik
- * Date: 8/22/13
- * Time: 1:59 PM
+ * This is the GetJsonCommand
+ *
+ * This command downloads the `.json` file from the remote server.
+ * The `.json` file is the base for all further statistic analysis.
+ * You should run this command as a cron job every minute.
+ * Add the `--dir=/path/` option to specify a directory where you want to store the downloaded files.
+ *
+ * PHP Version 5
+ *
+ * @category Service
+ * @package  Freifunk\JsonBundle\Service
+ * @author   Frederik Schubert <frederik@ferdynator.de>
+ *
  */
 
 namespace Freifunk\JsonBundle\Services;
 
 use Symfony\Component\Filesystem\Filesystem;
 
+/**
+ * Class GetJsonCommand
+ *
+ * @category Service
+ * @package  Freifunk\JsonBundle\Service
+ * @author   Frederik Schubert <frederik@ferdynator.de>
+ */
 class JsonLoader
 {
 
     /**
-     * @var string Json Url
+     * @var string Url
      */
     private $url;
 
     /**
-     * @var array cUrl info of the request
+     * @var Array cUrl info
      */
     private $info;
 
@@ -29,7 +45,7 @@ class JsonLoader
     private $fs;
 
     /**
-     * @param $url
+     * @param string $url Url where we get the json from.
      */
     public function __construct($url)
     {
@@ -40,8 +56,8 @@ class JsonLoader
     /**
      * Requests the headers of the `.json` file to check whether or not we need to download it.
      *
-     * @param $dir string The directory where to save the output
-     * @param $url string The url of the Json file.
+     * @param string $dir The directory where to save the output
+     * @param string $url The url of the Json file.
      *
      * @return boolean TRUE if the file is not saved yet. False otherwise.
      */
@@ -76,8 +92,8 @@ class JsonLoader
     /**
      * Requests the the `.json` file and save it.
      *
-     * @param $dir string The directory where to save the output
-     * @param $url string The url of the Json file.
+     * @param string $dir The directory where to save the output
+     * @param string $url The url of the Json file.
      *
      * @return string filename of new file.
      */

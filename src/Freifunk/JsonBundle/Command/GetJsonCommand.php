@@ -56,6 +56,7 @@ class GetJsonCommand extends ContainerAwareCommand
 
         if (!$jsonLoader->checkHeader($dir)) {
             $output->writeln('This json is saved already.');
+
             return;
         }
 

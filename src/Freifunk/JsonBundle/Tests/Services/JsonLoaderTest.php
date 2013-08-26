@@ -29,6 +29,9 @@ use Symfony\Component\Filesystem\Filesystem;
 class JsonLoaderTest extends WebTestCase
 {
 
+    /**
+     * Tests the `checkHeader` method of the JsonLoader-servie.
+     */
     public function testCheckHeader()
     {
 

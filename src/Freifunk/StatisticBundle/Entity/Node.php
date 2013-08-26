@@ -86,7 +86,7 @@ class Node
      *
      * @ORM\Column(name="fastdKey", type="string", length=64, nullable=true)
      * @Assert\Regex("/^[a-fA-F0-9]*$/")
-     * @Assert\Length(max=64)
+     * @Assert\Length(min=64, max=64)
      */
     private $fastdKey;
 

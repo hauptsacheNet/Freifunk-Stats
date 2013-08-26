@@ -24,6 +24,11 @@ class JsonLoader
     private $info;
 
     /**
+     * @var Filesystem Filesystem component
+     */
+    private $fs;
+
+    /**
      * @param $url
      */
     public function __construct($url)
@@ -74,7 +79,7 @@ class JsonLoader
      * @param $dir string The directory where to save the output
      * @param $url string The url of the Json file.
      *
-     * @return null none
+     * @return string filename of new file.
      */
     public function saveJson($dir, $url = null)
     {
@@ -99,6 +104,8 @@ class JsonLoader
 
         // save last timestamp in extra file:
         $this->fs->dumpFile($dir . 'latest', $this->info['filetime']);
+
+        return $filename;
     }
 
 }

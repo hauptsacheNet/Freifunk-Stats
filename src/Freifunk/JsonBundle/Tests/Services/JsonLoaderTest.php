@@ -32,16 +32,15 @@ class JsonLoaderTest extends WebTestCase
     public function testCheckHeader()
     {
 
+        $fs = new Filesystem();
+        $fs->mkdir('/tmp/testCheckHeader/');
+
         $client = static::createClient();
         $jsonLoader = new JsonLoader($client->getContainer()->getParameter('json_url'));
 
-        $this->assertTrue($jsonLoader->checkHeader('/tmp/'));
+        $this->assertTrue($jsonLoader->checkHeader('/tmp/testCheckHeader/'));
 
-        // cleanup
-        $fs = new Filesystem();
-        if ($fs->exists('/tmp/latest')) {
-            $fs->remove('/tmp/latest');
-        }
+        $fs->remove('/tmp/testCheckHeader/');
 
         unset($fs, $client, $jsonLoader);
     }

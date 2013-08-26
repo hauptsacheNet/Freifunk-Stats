@@ -60,8 +60,8 @@ class GetJsonCommand extends ContainerAwareCommand
         }
 
         try {
-            $jsonLoader->saveJson($dir);
-            $output->writeln('Json file saved.');
+            $name = $jsonLoader->saveJson($dir);
+            $output->writeln('Json file saved to '.$name);
         } catch (IOException $e) {
             $output->writeln('Could not write the file. Do you have permissions?');
         }

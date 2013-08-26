@@ -38,6 +38,9 @@ class GetJsonCommandTest extends WebTestCase
     public function testExecute()
     {
 
+        $fs = new Filesystem();
+        $fs->mkdir('/tmp/testGetJsonCommand/');
+
         $kernel = $this->createKernel();
         $kernel->boot();
 
@@ -47,16 +50,13 @@ class GetJsonCommandTest extends WebTestCase
         $command = $application->find('freifunk:get-json');
         $commandTester = new CommandTester($command);
         $commandTester->execute(
-            array('command' => $command->getName(), '--dir' => '/tmp/')
+            array('command' => $command->getName(), '--dir' => '/tmp/testGetJsonCommand/')
         );
 
-        $this->assertRegExp('/Json file saved./', $commandTester->getDisplay());
+        $result  = $commandTester->getDisplay();
+        $this->assertRegExp('/Json file saved to/', $result);
 
-        // cleanup
-        $fs = new Filesystem();
-        if ($fs->exists('/tmp/latest')) {
-            $fs->remove('/tmp/latest');
-        }
+        $fs->remove('/tmp/testGetJsonCommand/');
 
         unset($fs, $application, $kernel, $command, $commandTester);
 

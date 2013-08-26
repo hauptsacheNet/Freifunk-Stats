@@ -17,6 +17,7 @@ namespace Freifunk\JsonBundle\Tests\Services;
 
 use Freifunk\JsonBundle\Services\JsonLoader;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class GetJsonCommandTest
@@ -35,6 +36,14 @@ class JsonLoaderTest extends WebTestCase
         $jsonLoader = new JsonLoader($client->getContainer()->getParameter('json_url'));
 
         $this->assertTrue($jsonLoader->checkHeader('/tmp/'));
+
+        // cleanup
+        $fs = new Filesystem();
+        if ($fs->exists('/tmp/latest')) {
+            $fs->remove('/tmp/latest');
+        }
+
+        unset($fs, $client, $jsonLoader);
     }
 
 }

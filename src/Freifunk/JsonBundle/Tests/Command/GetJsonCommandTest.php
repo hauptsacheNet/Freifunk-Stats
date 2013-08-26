@@ -13,9 +13,11 @@
  *
  */
 
-use Symfony\Component\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
-use Freifunk\JsonBundle\Command\getJsonCommand;
+use Freifunk\JsonBundle\Command\GetJsonCommand;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 
 /**
@@ -25,7 +27,7 @@ use Freifunk\JsonBundle\Command\getJsonCommand;
  * @package  Freifunk\JsonBundle\Tests
  * @author   Frederik Schubert <frederik@ferdynator.de>
  */
-class GetJsonCommandTest extends \PHPUnit_Framework_TestCase
+class GetJsonCommandTest extends WebTestCase
 {
 
     /**
@@ -36,8 +38,11 @@ class GetJsonCommandTest extends \PHPUnit_Framework_TestCase
     public function testExecute()
     {
 
-        $application = new Application();
-        $application->add(new getJsonCommand());
+        $kernel = $this->createKernel();
+        $kernel->boot();
+
+        $application = new Application($kernel);
+        $application->add(new GetJsonCommand());
 
         $command = $application->find('freifunk:get-json');
         $commandTester = new CommandTester($command);
@@ -46,6 +51,14 @@ class GetJsonCommandTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertRegExp('/Json file saved./', $commandTester->getDisplay());
+
+        // cleanup
+        $fs = new Filesystem();
+        if ($fs->exists('/tmp/latest')) {
+            $fs->remove('/tmp/latest');
+        }
+
+        unset($fs, $application, $kernel, $command, $commandTester);
 
     }
 

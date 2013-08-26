@@ -4,6 +4,7 @@ namespace Freifunk\StatisticBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Node
@@ -25,21 +26,36 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="nodeName", type="string", length=255)
+     * @ORM\Column(name="nodeName", type="string", length=32)
+     * @Assert\NotNull
+     * @Assert\Regex("/^[-a-zA-Z0-9_]{1,32}$/")
      */
     private $nodeName;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="realName", type="string", length=255)
+     * @ORM\Column(name="realName", type="string", length=64)
+     * @Assert\NotNull
+     * @Assert\Regex("/^[-a-zA-Z0-9_ äöüÄÖÜß]{1,64}$/")
      */
     private $realName;
 
     /**
      * @var string
      *
+     * @ORM\Column(name="email", type="string", length=255)
+     * @Assert\NotNull
+     * @Assert\Email
+     */
+    private $email;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="mac", type="string", length=17)
+     * @Assert\NotNull
+     * @Assert\Regex("/^([a-fA-F0-9]{12}|([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2})$/")
      */
     private $mac;
 
@@ -47,6 +63,7 @@ class Node
      * @var float
      *
      * @ORM\Column(name="latitude", type="float")
+     * @Assert\NotNull
      */
     private $latitude;
 
@@ -54,13 +71,15 @@ class Node
      * @var float
      *
      * @ORM\Column(name="longitude", type="float")
+     * @Assert\NotNull
      */
     private $longitude;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="fastdKey", type="string", length=64)
+     * @ORM\Column(name="fastdKey", type="string", length=64, nullable=true)
+     * @Assert\Regex("/^([a-fA-F0-9]{64})$/")
      */
     private $fastdKey;
 
@@ -75,6 +94,7 @@ class Node
      * @var \DateTime
      *
      * @ORM\Column(name="createdAt", type="datetime")
+     * @Assert\NotNull
      */
     private $createdAt;
 
@@ -141,6 +161,29 @@ class Node
     public function getRealName()
     {
         return $this->realName;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Node
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
     }
 
     /**

@@ -13,3 +13,4 @@ cache.properties
 /vendor/
 /bin/
 /composer.phar
+/web/app_localdev.php

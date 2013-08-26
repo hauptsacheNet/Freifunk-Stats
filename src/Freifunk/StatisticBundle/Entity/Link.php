@@ -29,7 +29,7 @@ class Link
     /**
      * @var string
      *
-     * @ORM\Column(name="type", type="integer")
+     * @ORM\Column(name="type", type="smallint")
      * @Assert\NotNull
      * @Assert\Range(min=0, max=1)
      */

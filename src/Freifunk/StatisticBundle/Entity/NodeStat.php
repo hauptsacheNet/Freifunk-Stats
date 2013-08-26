@@ -3,6 +3,7 @@
 namespace Freifunk\StatisticBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * NodeStat
@@ -26,6 +27,7 @@ class NodeStat
      * @var boolean
      *
      * @ORM\Column(name="online", type="boolean")
+     * @Assert\NotNull
      */
     private $online;
 
@@ -33,6 +35,7 @@ class NodeStat
      * @var integer
      *
      * @ORM\Column(name="clientCount", type="integer")
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $clientCount;
 
@@ -40,6 +43,7 @@ class NodeStat
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", inversedBy="stats", fetch="LAZY")
+     * @Assert\NotNull
      */
     private $node;
 
@@ -47,6 +51,7 @@ class NodeStat
      * @var \DateTime
      *
      * @ORM\Column(name="createdAt", type="datetime")
+     * @Assert\NotNull
      */
     private $createdAt;
 

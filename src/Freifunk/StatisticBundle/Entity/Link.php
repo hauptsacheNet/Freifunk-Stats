@@ -3,6 +3,7 @@
 namespace Freifunk\StatisticBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Link
@@ -10,7 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Freifunk\StatisticBundle\Entity\LinkRepository")
  */
-class Link {
+class Link
+{
 
     const VPN = 0;
     const CLIENT = 1;
@@ -28,6 +30,8 @@ class Link {
      * @var string
      *
      * @ORM\Column(name="type", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=1)
      */
     private $type;
 
@@ -35,6 +39,7 @@ class Link {
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", fetch="EAGER")
+     * @Assert\NotNull
      */
     private $source;
 
@@ -42,6 +47,7 @@ class Link {
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", fetch="EAGER")
+     * @Assert\NotNull
      */
     private $target;
 
@@ -49,6 +55,7 @@ class Link {
      * @var \DateTime
      *
      * @ORM\Column(name="createdAt", type="datetime")
+     * @Assert\NotNull
      */
     private $createdAt;
 
@@ -60,7 +67,7 @@ class Link {
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -76,14 +83,14 @@ class Link {
     public function setType($type)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
     /**
      * Get type
      *
-     * @return integer 
+     * @return integer
      */
     public function getType()
     {
@@ -99,14 +106,14 @@ class Link {
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
     /**
      * Get createdAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -122,14 +129,14 @@ class Link {
     public function setSource(\Freifunk\StatisticBundle\Entity\Node $source = null)
     {
         $this->source = $source;
-    
+
         return $this;
     }
 
     /**
      * Get source
      *
-     * @return \Freifunk\StatisticBundle\Entity\Node 
+     * @return \Freifunk\StatisticBundle\Entity\Node
      */
     public function getSource()
     {
@@ -145,14 +152,14 @@ class Link {
     public function setTarget(\Freifunk\StatisticBundle\Entity\Node $target = null)
     {
         $this->target = $target;
-    
+
         return $this;
     }
 
     /**
      * Get target
      *
-     * @return \Freifunk\StatisticBundle\Entity\Node 
+     * @return \Freifunk\StatisticBundle\Entity\Node
      */
     public function getTarget()
     {

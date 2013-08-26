@@ -3,6 +3,7 @@
 namespace Freifunk\StatisticBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * UpdateLog
@@ -25,6 +26,7 @@ class UpdateLog
      * @var \DateTime
      *
      * @ORM\Column(name="createdAt", type="datetime")
+     * @Assert\NotNull
      */
     private $createdAt;
 
@@ -32,6 +34,7 @@ class UpdateLog
      * @var \DateTime
      *
      * @ORM\Column(name="fileTime", type="datetime")
+     * @Assert\NotNull
      */
     private $fileTime;
 
@@ -39,6 +42,8 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="nodesAdded", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $nodesAdded;
 
@@ -46,6 +51,8 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="nodesRemoved", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $nodesRemoved;
 
@@ -53,6 +60,8 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="nodesPreserved", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $nodesPreserved;
 
@@ -60,6 +69,8 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="statusUpdates", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $statusUpdates;
 
@@ -67,6 +78,8 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="linksAdded", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $linksAdded;
 
@@ -74,6 +87,8 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="linksRemoved", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $linksRemoved;
 
@@ -81,13 +96,15 @@ class UpdateLog
      * @var integer
      *
      * @ORM\Column(name="linksPreserved", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
      */
     private $linksPreserved;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="message", type="text")
+     * @ORM\Column(name="message", type="text", nullable=true)
      */
     private $message;
 

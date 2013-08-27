@@ -39,6 +39,7 @@ class Link
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", fetch="EAGER")
+     * @ORM\JoinColumn(nullable=false)
      * @Assert\NotNull(message="The source is not available")
      */
     private $source;
@@ -47,6 +48,7 @@ class Link
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", fetch="EAGER")
+     * @ORM\JoinColumn(nullable=false)
      * @Assert\NotNull(message="The target is not available")
      */
     private $target;

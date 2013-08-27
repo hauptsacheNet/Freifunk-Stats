@@ -60,6 +60,13 @@ class NodeStat
         $this->createdAt = new \DateTime();
     }
 
+    public function equals(NodeStat $other)
+    {
+        return $this->node == $other->node
+            && $this->online == $other->online
+            && $this->clientCount == $other->clientCount;
+    }
+
     /**
      * Get id
      *

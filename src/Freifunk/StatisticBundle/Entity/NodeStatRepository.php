@@ -12,4 +12,18 @@ use Doctrine\ORM\EntityRepository;
  */
 class NodeStatRepository extends EntityRepository
 {
+    /**
+     * Returns the last node status of the specified node
+     *
+     * @param Node $node
+     * @return NodeStat
+     */
+    public function getLastStatOf(Node $node)
+    {
+        $qb = $this->createQueryBuilder('s');
+        $qb->andWhere($qb->expr()->eq('s.node', $qb->expr()->literal($node->getId())));
+        $qb->orderBy('s.createdAt', 'DESC');
+        $qb->setMaxResults(1);
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

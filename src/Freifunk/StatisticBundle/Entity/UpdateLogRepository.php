@@ -12,4 +12,12 @@ use Doctrine\ORM\EntityRepository;
  */
 class UpdateLogRepository extends EntityRepository
 {
+    public function findLogsAfter($timestamp)
+    {
+        $manager = $this->getEntityManager();
+        $query = $manager->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
+        $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
+
+        return $count;
+    }
 }

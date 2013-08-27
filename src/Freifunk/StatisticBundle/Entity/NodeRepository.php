@@ -12,4 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class NodeRepository extends EntityRepository
 {
+
+    /**
+     * @param $mac
+     * @return Node
+     */
+    public function findByMac($mac)
+    {
+        $qb = $this->createQueryBuilder("n");
+        $qb->andWhere($qb->expr()->eq("n.mac", $qb->expr()->literal($mac)));
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

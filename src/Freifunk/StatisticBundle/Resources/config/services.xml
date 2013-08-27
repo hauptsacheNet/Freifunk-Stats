@@ -17,4 +17,11 @@
         </service>
     </services>
     -->
+
+    <services>
+        <service id="freifunk_statistic.json_importer" class="Freifunk\StatisticBundle\Service\JsonImporter">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument type="service" id="validator" />
+        </service>
+    </services>
 </container>

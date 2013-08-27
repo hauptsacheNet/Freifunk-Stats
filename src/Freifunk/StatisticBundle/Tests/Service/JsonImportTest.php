@@ -11,16 +11,16 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class JsonImportTest extends WebTestCase
 {
-    protected $container;
+    protected static $container;
     /** @var \Doctrine\Common\Persistence\ObjectManager */
-    protected $em;
+    protected static $em;
 
-    protected function setUp()
+    public static function setUpBeforeClass()
     {
-        self::$kernel = $this->createKernel();
+        self::$kernel = static::createKernel();
         self::$kernel->boot();
-        $this->container = self::$kernel->getContainer();
-        $this->em = $this->container->get('doctrine.orm.entity_manager');
+        static::$container = self::$kernel->getContainer();
+        static::$em = static::$container->get('doctrine.orm.entity_manager');
     }
 
     public static function invalidFileNames()
@@ -52,7 +52,7 @@ class JsonImportTest extends WebTestCase
         $entityManager = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
-        return new \Freifunk\StatisticBundle\Service\JsonImporter($entityManager, $this->container->get("validator"));
+        return new \Freifunk\StatisticBundle\Service\JsonImporter($entityManager, static::$container->get("validator"));
     }
 
     /**

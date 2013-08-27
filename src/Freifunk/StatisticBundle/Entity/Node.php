@@ -90,7 +90,21 @@ class Node
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="NodeStat", mappedBy="node", fetch="EXTRA_LAZY")
+     * @ORM\OneToMany(targetEntity="Link", mappedBy="target", fetch="LAZY", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $targetLinks;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Link", mappedBy="source", fetch="LAZY", cascade={"remove"}, orphanRemoval=true)
+     */
+    private $sourceLinks;
+
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="NodeStat", mappedBy="node", fetch="EXTRA_LAZY", cascade={"remove"}, orphanRemoval=true)
      */
     private $stats;
 

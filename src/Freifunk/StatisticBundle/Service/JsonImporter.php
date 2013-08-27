@@ -16,16 +16,16 @@ use Freifunk\StatisticBundle\Entity\Link;
 use Freifunk\StatisticBundle\Entity\LinkRepository;
 use Freifunk\StatisticBundle\Entity\Node;
 use Freifunk\StatisticBundle\Entity\NodeRepository;
+use Freifunk\StatisticBundle\Entity\NodeStat;
 use Freifunk\StatisticBundle\Entity\NodeStatRepository;
 use Freifunk\StatisticBundle\Entity\UpdateLog;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator;
 
 class JsonImporter
 {
-    /** @var Container */
-    private $container;
     /** @var ObjectManager */
     private $em;
     /** @var Validator */
@@ -38,6 +38,10 @@ class JsonImporter
     /** @var LinkRepository */
     private $linkRep;
 
+    /**
+     * @param ObjectManager $em
+     * @param Validator $validator
+     */
     public function __construct(ObjectManager $em, Validator $validator)
     {
         $this->em = $em;
@@ -63,8 +67,10 @@ class JsonImporter
     public function fromJSON($string)
     {
         $data = json_decode($string, true);
+        $log = new UpdateLog();
+        $log->setFileSize(strlen($string));
+        unset($string); // save some memory
         if ($data === null) {
-            $log = new UpdateLog();
             $log->addMessage('JSON file was invalid');
             $this->em->persist($log);
             $this->em->flush();
@@ -76,11 +82,12 @@ class JsonImporter
 
     /**
      * @param array $data
+     * @param UpdateLog $updateLog
      * @return UpdateLog
      */
-    public function fromData(array $data)
+    public function fromData(array &$data, UpdateLog $updateLog = null)
     {
-        $log = new UpdateLog();
+        $log = $updateLog ? $updateLog : new UpdateLog();
 
         try {
             // json complete check
@@ -103,7 +110,12 @@ class JsonImporter
         return $log;
     }
 
-    private function updateFileInfo(array $data, UpdateLog $log)
+    /**
+     * @param array $data
+     * @param UpdateLog $log
+     * @throws JsonImporterException
+     */
+    private function updateFileInfo(array &$data, UpdateLog $log)
     {
         if (!array_key_exists('timestamp', $data)) {
             throw new JsonImporterException('meta.timestamp');
@@ -115,36 +127,49 @@ class JsonImporter
     // NODES //
     ///////////
 
-    private function importNodes(array $data, UpdateLog $log)
+    /**
+     * @param array $data
+     * @param UpdateLog $log
+     */
+    private function importNodes(array &$data, UpdateLog $log)
     {
-        $lastFlush = -1;
+        // keep a list of all node id's for the safety removal later
+        $existing = array();
+
+        // iterate all nodes in the file
         foreach ($data as $key => $node) {
-            // on 100 new nodes flush once
-            if ($log->getNodesAdded() % 100 == 0 && $log->getNodesAdded() != $lastFlush) {
-                $this->em->flush();
-                $lastFlush = $log->getNodesAdded();
-            }
-            // try to import the node
             try {
-                $this->importNode($node, $log);
+                $node = $this->importNode($node, $log);
+                $existing[] = $node;
             } catch (JsonImporterException $e) {
                 $log->addMessage(
-                    'error in node ' . $key . ' with the property '
-                    . $e->getWrongKey() . ' with value ' . $node[$e->getWrongKey()]
-                    . ' (' . $e->getMessage() . ')'
+                    'error in node ' . $key . ' with property '
+                    . $e->getWrongKey() . ' (' . $e->getMessage() . ')'
                 );
             }
         }
+        $this->em->flush();
+
+        // remove all nodes which are not in our list
+        $qb = $this->nodeRep->createQueryBuilder('n');
+        if (!empty($existing)) {
+            $qb->andWhere($qb->expr()->notIn('n.id', $this->createIdList($existing)));
+        }
+        foreach ($qb->getQuery()->getResult() as $node) {
+            $this->em->remove($node);
+            $log->nodeRemoved();
+        }
+        $this->em->flush();
     }
 
-    private function importNode(array $data, UpdateLog $log)
+    /**
+     * @param array $data
+     * @param UpdateLog $log
+     * @return Node
+     */
+    private function importNode(array &$data, UpdateLog $log)
     {
-        // check if we have everything
-        foreach (array('flags', 'geo', 'id', 'macs', 'name') as $key) {
-            if (!array_key_exists($key, $data)) {
-                throw new JsonImporterException($key);
-            }
-        }
+        $this->testData($data, array('flags', 'geo', 'id', 'macs', 'name'));
 
         // import the node
         $node = new Node();
@@ -157,55 +182,80 @@ class JsonImporter
 
         // check if valid and add it if needed
         $violations = $this->validator->validate($node);
-        if ($violations->count()) {
-            /** @var ConstraintViolationInterface $violation */
-            foreach ($violations->getIterator() as $violation) {
-                throw new JsonImporterException($violation->getPropertyPath(), $violation->getMessage());
-            }
+        $this->handleViolations($violations);
+
+        $existingNode = $this->nodeRep->findByMac($node->getMac());
+        if ($existingNode != null) {
+            $log->nodePreserved();
         } else {
-            if ($this->nodeRep->findByMac($node->getMac()) != null) {
-                $log->nodePreserved();
-            } else {
-                $this->em->persist($node);
-                $log->nodeAdded();
-            }
+            $this->em->persist($node);
+            $log->nodeAdded();
+            $existingNode = $node;
         }
+
+        // now add the node status to the existing node
+        $status = new NodeStat();
+        $status->setNode($existingNode);
+        $status->setOnline((bool)$data['flags']['online']);
+        $status->setClientCount(count(explode(', ', $data['macs'])));
+
+        // look for the newest status of the node
+        $lastStatus = $this->nodeStatRep->getLastStatOf($existingNode);
+        if ($lastStatus == null || !$lastStatus->equals($status)) {
+            $existingNode->addStat($status);
+            $this->em->persist($status);
+            $log->statusUpdated();
+        }
+
+        return $existingNode;
     }
 
     ///////////
     // LINKS //
     ///////////
 
-    private function importLinks(array $data, UpdateLog $log)
+    /**
+     * @param array $data
+     * @param UpdateLog $log
+     */
+    private function importLinks(array &$data, UpdateLog $log)
     {
-        $lastFlush = -1;
+        // keep a list of all link id's for the update
+        $existing = array();
+
+        // add all links
         foreach ($data as $key => $link) {
-            // on 100 new links flush once
-            if ($log->getLinksAdded() % 100 == 0 && $log->getLinksAdded() != $lastFlush) {
-                $this->em->flush();
-                $lastFlush = $log->getLinksAdded();
-            }
-            // import a link
             try {
-                $this->importLink($link, $log);
+                $link = $this->importLink($link, $log);
+                $existing[] = $link;
             } catch (JsonImporterException $e) {
                 $log->addMessage(
-                    'error in link ' . $key . '. The property '
-                    . $e->getWrongKey() . ' with value ' . $link[$e->getWrongKey()]
-                    . ' (' . $e->getMessage() . ')'
+                    'error in link ' . $key . ' with property '
+                    . $e->getWrongKey() . ' (' . $e->getMessage() . ')'
                 );
             }
         }
+        $this->em->flush();
+
+        // also set all links closed if they were not listed
+        $qb = $this->linkRep->createQueryBuilder('l')->update();
+        $qb->set('l.closedAt', $qb->expr()->literal(date('Y-m-d H:i:s')));
+        if (!empty($existing)) {
+            $qb->andWhere($qb->expr()->notIn('l.id', $this->createIdList($existing)));
+        }
+        $qb->andWhere($qb->expr()->isNull('l.closedAt'));
+        $removed = $qb->getQuery()->execute();
+        $log->setLinksRemoved($removed);
     }
 
-    private function importLink(array $data, UpdateLog $log)
+    /**
+     * @param array $data
+     * @param UpdateLog $log
+     * @return Link
+     */
+    private function importLink(array &$data, UpdateLog $log)
     {
-        // check if there is everything
-        foreach (array('id', 'quality', 'source', 'target', 'type') as $key) {
-            if (!array_key_exists($key, $data)) {
-                throw new JsonImporterException($key);
-            }
-        }
+        $this->testData($data, array('id', 'quality', 'source', 'target', 'type'));
 
         // create the links
         $link = new Link();
@@ -217,19 +267,57 @@ class JsonImporter
 
         // check if valid and add it if needed
         $violations = $this->validator->validate($link);
-        if ($violations->count()) {
-            /** @var ConstraintViolationInterface $violation */
-            foreach ($violations->getIterator() as $violation) {
-                throw new JsonImporterException($violation->getPropertyPath(), $violation->getMessage());
-            }
+        $this->handleViolations($violations);
+
+        $existingLink = $this->linkRep->findExistingLink($link);
+        if ($existingLink != null) {
+            $log->linkPreserved();
         } else {
-            $existing = $this->linkRep->findExistingLink($link);
-            if ($existing != null) {
-                $log->linkPreserved();
-            } else {
-                $this->em->persist($link);
-                $log->linkAdded();
+            $this->em->persist($link);
+            $log->linkAdded();
+            $existingLink = $link;
+        }
+
+        return $existingLink;
+    }
+
+    ///////////
+    // UTILS //
+    ///////////
+
+    /**
+     * @param array $data
+     * @param array $keys
+     * @throws JsonImporterException
+     */
+    private static function testData(array &$data, array $keys)
+    {
+        // check if there is everything
+        foreach ($keys as $key) {
+            if (!array_key_exists($key, $data)) {
+                throw new JsonImporterException($key);
             }
         }
+    }
+
+    /**
+     * @param ConstraintViolationListInterface $violations
+     * @throws JsonImporterException
+     */
+    private static function handleViolations(ConstraintViolationListInterface $violations)
+    {
+        if ($violations->count() > 0) {
+            $violation = $violations->get(0);
+            throw new JsonImporterException($violation->getPropertyPath(), $violation->getMessage());
+        }
+    }
+
+    private static function createIdList(array $entities)
+    {
+        $list = array();
+        foreach ($entities as $entity) {
+            $list[] = $entity->getId();
+        }
+        return $list;
     }
 }

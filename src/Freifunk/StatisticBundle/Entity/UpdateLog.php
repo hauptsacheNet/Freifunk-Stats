@@ -33,8 +33,7 @@ class UpdateLog
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fileTime", type="datetime")
-     * @Assert\NotNull
+     * @ORM\Column(name="fileTime", type="datetime", nullable=true)
      */
     private $fileTime;
 
@@ -158,10 +157,16 @@ class UpdateLog
         $this->linksRemoved++;
     }
 
+    public function statusUpdated()
+    {
+        $this->statusUpdates++;
+    }
+
     public function __toString()
     {
         return 'nodes(new: ' . $this->getNodesAdded() . ', preserved: ' . $this->getNodesPreserved() . ', removed: ' . $this->getNodesRemoved() . ')'
-        . "\n" . 'links(new: ' . $this->getLinksAdded() . ', preserved: ' . $this->getLinksPreserved() . ', removed: ' . $this->getLinksRemoved() . ')';
+        . "\n" . 'links(new: ' . $this->getLinksAdded() . ', preserved: ' . $this->getLinksPreserved() . ', removed: ' . $this->getLinksRemoved() . ')'
+        . "\n" . 'also there were ' . $this->getStatusUpdates() . ' status updates';
     }
 
     /**

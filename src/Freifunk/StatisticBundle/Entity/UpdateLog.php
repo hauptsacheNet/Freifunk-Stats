@@ -39,13 +39,22 @@ class UpdateLog
     private $fileTime;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="fileSize", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
+     */
+    private $fileSize = 0;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="nodesAdded", type="integer")
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $nodesAdded;
+    private $nodesAdded = 0;
 
     /**
      * @var integer
@@ -54,7 +63,7 @@ class UpdateLog
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $nodesRemoved;
+    private $nodesRemoved = 0;
 
     /**
      * @var integer
@@ -63,7 +72,7 @@ class UpdateLog
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $nodesPreserved;
+    private $nodesPreserved = 0;
 
     /**
      * @var integer
@@ -72,7 +81,7 @@ class UpdateLog
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $statusUpdates;
+    private $statusUpdates = 0;
 
     /**
      * @var integer
@@ -81,7 +90,7 @@ class UpdateLog
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $linksAdded;
+    private $linksAdded = 0;
 
     /**
      * @var integer
@@ -90,7 +99,7 @@ class UpdateLog
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $linksRemoved;
+    private $linksRemoved = 0;
 
     /**
      * @var integer
@@ -99,24 +108,70 @@ class UpdateLog
      * @Assert\NotNull
      * @Assert\Range(min=0, max=2147483647)
      */
-    private $linksPreserved;
+    private $linksPreserved = 0;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="message", type="text", nullable=true)
+     * @ORM\Column(name="message", type="text")
      */
-    private $message;
+    private $message = "";
+
 
     public function __construct()
     {
         $this->createdAt = new \DateTime();
     }
 
+    public function addMessage($message)
+    {
+        $this->message .= $message . "\n";
+    }
+
+    public function nodePreserved()
+    {
+        $this->nodesPreserved++;
+    }
+
+    public function nodeAdded()
+    {
+        $this->nodesAdded++;
+    }
+
+    public function nodeRemoved()
+    {
+        $this->nodesRemoved++;
+    }
+
+    public function linkPreserved()
+    {
+        $this->linksPreserved++;
+    }
+
+    public function linkAdded()
+    {
+        $this->linksAdded++;
+    }
+
+    public function linkRemoved()
+    {
+        $this->linksRemoved++;
+    }
+
+    public function __toString()
+    {
+        return 'nodes(new: ' . $this->getNodesAdded() . ', preserved: ' . $this->getNodesPreserved() . ', removed: ' . $this->getNodesRemoved() . ')'
+        . "\n" . 'links(new: ' . $this->getLinksAdded() . ', preserved: ' . $this->getLinksPreserved() . ', removed: ' . $this->getLinksRemoved() . ')';
+    }
+
+    /**
+     * Generated from here...
+     */
+
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -132,14 +187,14 @@ class UpdateLog
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
     /**
      * Get createdAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -155,14 +210,14 @@ class UpdateLog
     public function setFileTime($fileTime)
     {
         $this->fileTime = $fileTime;
-    
+
         return $this;
     }
 
     /**
      * Get fileTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getFileTime()
     {
@@ -178,14 +233,14 @@ class UpdateLog
     public function setNodesAdded($nodesAdded)
     {
         $this->nodesAdded = $nodesAdded;
-    
+
         return $this;
     }
 
     /**
      * Get nodesAdded
      *
-     * @return integer 
+     * @return integer
      */
     public function getNodesAdded()
     {
@@ -201,14 +256,14 @@ class UpdateLog
     public function setNodesRemoved($nodesRemoved)
     {
         $this->nodesRemoved = $nodesRemoved;
-    
+
         return $this;
     }
 
     /**
      * Get nodesRemoved
      *
-     * @return integer 
+     * @return integer
      */
     public function getNodesRemoved()
     {
@@ -224,14 +279,14 @@ class UpdateLog
     public function setNodesPreserved($nodesPreserved)
     {
         $this->nodesPreserved = $nodesPreserved;
-    
+
         return $this;
     }
 
     /**
      * Get nodesPreserved
      *
-     * @return integer 
+     * @return integer
      */
     public function getNodesPreserved()
     {
@@ -247,14 +302,14 @@ class UpdateLog
     public function setStatusUpdates($statusUpdates)
     {
         $this->statusUpdates = $statusUpdates;
-    
+
         return $this;
     }
 
     /**
      * Get statusUpdates
      *
-     * @return integer 
+     * @return integer
      */
     public function getStatusUpdates()
     {
@@ -270,14 +325,14 @@ class UpdateLog
     public function setLinksAdded($linksAdded)
     {
         $this->linksAdded = $linksAdded;
-    
+
         return $this;
     }
 
     /**
      * Get linksAdded
      *
-     * @return integer 
+     * @return integer
      */
     public function getLinksAdded()
     {
@@ -293,14 +348,14 @@ class UpdateLog
     public function setLinksRemoved($linksRemoved)
     {
         $this->linksRemoved = $linksRemoved;
-    
+
         return $this;
     }
 
     /**
      * Get linksRemoved
      *
-     * @return integer 
+     * @return integer
      */
     public function getLinksRemoved()
     {
@@ -316,14 +371,14 @@ class UpdateLog
     public function setLinksPreserved($linksPreserved)
     {
         $this->linksPreserved = $linksPreserved;
-    
+
         return $this;
     }
 
     /**
      * Get linksPreserved
      *
-     * @return integer 
+     * @return integer
      */
     public function getLinksPreserved()
     {
@@ -339,17 +394,40 @@ class UpdateLog
     public function setMessage($message)
     {
         $this->message = $message;
-    
+
         return $this;
     }
 
     /**
      * Get message
      *
-     * @return string 
+     * @return string
      */
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * Set fileSize
+     *
+     * @param integer $fileSize
+     * @return UpdateLog
+     */
+    public function setFileSize($fileSize)
+    {
+        $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    /**
+     * Get fileSize
+     *
+     * @return integer
+     */
+    public function getFileSize()
+    {
+        return $this->fileSize;
     }
 }

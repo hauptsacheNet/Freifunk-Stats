@@ -39,7 +39,7 @@ class Link
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", fetch="EAGER")
-     * @Assert\NotNull
+     * @Assert\NotNull(message="The source is not available")
      */
     private $source;
 
@@ -47,9 +47,17 @@ class Link
      * @var Node
      *
      * @ORM\ManyToOne(targetEntity="Node", fetch="EAGER")
-     * @Assert\NotNull
+     * @Assert\NotNull(message="The target is not available")
      */
     private $target;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="quality", type="string", length=255)
+     * @Assert\NotNull
+     */
+    private $quality;
 
     /**
      * @var \DateTime
@@ -58,6 +66,13 @@ class Link
      * @Assert\NotNull
      */
     private $createdAt;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="closedAt", type="datetime", nullable=true)
+     */
+    private $closedAt;
 
     public function __construct()
     {
@@ -164,5 +179,51 @@ class Link
     public function getTarget()
     {
         return $this->target;
+    }
+
+    /**
+     * Set quality
+     *
+     * @param string $quality
+     * @return Link
+     */
+    public function setQuality($quality)
+    {
+        $this->quality = $quality;
+    
+        return $this;
+    }
+
+    /**
+     * Get quality
+     *
+     * @return string 
+     */
+    public function getQuality()
+    {
+        return $this->quality;
+    }
+
+    /**
+     * Set closedAt
+     *
+     * @param \DateTime $closedAt
+     * @return Link
+     */
+    public function setClosedAt($closedAt)
+    {
+        $this->closedAt = $closedAt;
+    
+        return $this;
+    }
+
+    /**
+     * Get closedAt
+     *
+     * @return \DateTime 
+     */
+    public function getClosedAt()
+    {
+        return $this->closedAt;
     }
 }

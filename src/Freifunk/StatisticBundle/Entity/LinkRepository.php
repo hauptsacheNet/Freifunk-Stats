@@ -12,4 +12,13 @@ use Doctrine\ORM\EntityRepository;
  */
 class LinkRepository extends EntityRepository
 {
+    public function findExistingLink(Link $link)
+    {
+        $qb = $this->createQueryBuilder('l');
+        $qb->andWhere($qb->expr()->eq('l.source', $qb->expr()->literal($link->getSource()->getId())));
+        $qb->andWhere($qb->expr()->eq('l.target', $qb->expr()->literal($link->getTarget()->getId())));
+        $qb->andWhere($qb->expr()->eq('l.type', $qb->expr()->literal($link->getType())));
+        $qb->andWhere($qb->expr()->isNull('l.closedAt'));
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

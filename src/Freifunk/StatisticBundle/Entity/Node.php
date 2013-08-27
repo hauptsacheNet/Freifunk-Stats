@@ -26,8 +26,7 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="nodeName", type="string", length=32)
-     * @Assert\NotNull
+     * @ORM\Column(name="nodeName", type="string", length=32, nullable=true)
      * @Assert\Length(min=1,max=32)
      * @Assert\Regex("/^[-a-zA-Z0-9_]*$/")
      */
@@ -36,8 +35,8 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="realName", type="string", length=64)
-     * @Assert\NotNull
+     * @ORM\Column(name="realName", type="string", length=64, nullable=true)
+     * //@Assert\NotNull
      * @Assert\Length(min=1,max=64)
      * @Assert\Regex("/^[-a-zA-Z0-9_ äöüÄÖÜß]*$/")
      */
@@ -46,8 +45,8 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="email", type="string", length=255)
-     * @Assert\NotNull
+     * @ORM\Column(name="email", type="string", length=255, nullable=true)
+     * //@Assert\NotNull
      * @Assert\Email
      * @Assert\Length(max=255)
      */
@@ -56,7 +55,7 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="mac", type="string", length=17)
+     * @ORM\Column(name="mac", type="string", length=17, unique=true)
      * @Assert\NotNull
      * @Assert\Regex("/^([a-fA-F0-9]{12}|([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2})$/")
      * @Assert\Length(max=17)
@@ -66,8 +65,7 @@ class Node
     /**
      * @var float
      *
-     * @ORM\Column(name="latitude", type="float")
-     * @Assert\NotNull
+     * @ORM\Column(name="latitude", type="float", nullable=true)
      * @Assert\Range(min=-90, max=90)
      */
     private $latitude;
@@ -75,8 +73,7 @@ class Node
     /**
      * @var float
      *
-     * @ORM\Column(name="longitude", type="float")
-     * @Assert\NotNull
+     * @ORM\Column(name="longitude", type="float", nullable=true)
      * @Assert\Range(min=-180, max=180)
      */
     private $longitude;

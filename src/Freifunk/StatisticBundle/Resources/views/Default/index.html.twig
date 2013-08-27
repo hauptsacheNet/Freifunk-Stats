@@ -3,16 +3,17 @@
 {% block body %}
 Es sind <span class="info">{{ total_nodes| default(0) }}</span> Knoten eingetragen.
 <p>
-Neue Daten pro
-Stunde: {{ logs_per_hour }}<br />
-Tag: {{ logs_per_day }}<br />
-Woche: {{ logs_per_week }}<br />
+Neue Daten pro<br />
+Stunde: {{ logs_per_hour }} (<span class="warning">{{ size_per_hour }}kb</span>)<br />
+Tag: {{ logs_per_day }} (<span class="warning">{{ size_per_hour }}kb</span>)<br />
+Woche: {{ logs_per_week }} (<span class="warning">{{ size_per_hour }}kb</span>)<br />
 </p>
 <table>
     <thead>
         <tr>
             <th>Log-Zeit</th>
             <th>Json-Zeit</th>
+            <th>Dateigröße</th>
             <th>Knoten</th>
             <th>Status</th>
             <th>Links</th>
@@ -23,6 +24,7 @@ Woche: {{ logs_per_week }}<br />
         <tr>
             <td>{{ log.createdAt | date('Y.m.d \\u\\m H:i:s') }}</td>
             <td>{{ log.filetime | date('Y.m.d \\u\\m H:i:s') }}</td>
+            <td>{{ log.fileSize }}</td>
             <td>
                 <span class="info">+{{ log.nodesAdded }}</span>|{{ log.nodesPreserved }}|<span class="error">-{{ log.nodesRemoved }}</span>
             </td>

@@ -12,10 +12,27 @@ use Doctrine\ORM\EntityRepository;
  */
 class UpdateLogRepository extends EntityRepository
 {
+    /**
+     * @param $timestamp
+     * @return mixed
+     */
     public function findLogsAfter($timestamp)
     {
         $manager = $this->getEntityManager();
         $query = $manager->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
+        $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
+
+        return $count;
+    }
+
+    /**
+     * @param $timestamp
+     * @return mixed
+     */
+    public function findLogSizeAfter($timestamp)
+    {
+        $manager = $this->getEntityManager();
+        $query = $manager->createQuery('SELECT SUM(l.fileSize) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
         $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
 
         return $count;

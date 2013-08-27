@@ -36,7 +36,10 @@ class DefaultController extends Controller
             'table_size' => $size_query[0]['pg_size_pretty'],
             'logs_per_hour' => $updateLogRepository->findLogsAfter($now->modify('-1 hour')),
             'logs_per_day' => $updateLogRepository->findLogsAfter($now->modify('+1 hour -1 day')),
-            'logs_per_week' => $updateLogRepository->findLogsAfter($now->modify('-6 days'))
+            'logs_per_week' => $updateLogRepository->findLogsAfter($now->modify('-6 days')),
+            'size_per_hour' => $updateLogRepository->findLogSizeAfter($now->modify('-1 hour')),
+            'size_per_day' => $updateLogRepository->findLogSizeAfter($now->modify('+1 hour -1 day')),
+            'size_per_week' => $updateLogRepository->findLogSizeAfter($now->modify('-6 days'))
         );
     }
 }

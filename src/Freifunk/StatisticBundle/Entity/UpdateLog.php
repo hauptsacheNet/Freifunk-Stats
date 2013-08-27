@@ -121,6 +121,7 @@ class UpdateLog
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->fileTime = new \DateTime();
     }
 
     public function addMessage($message)

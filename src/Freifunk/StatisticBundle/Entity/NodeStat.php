@@ -50,14 +50,13 @@ class NodeStat
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="time", type="datetime")
      * @Assert\NotNull
      */
-    private $createdAt;
+    private $time;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
     }
 
     public function equals(NodeStat $other)
@@ -124,29 +123,6 @@ class NodeStat
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return NodeStat
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
      * Set node
      *
      * @param \Freifunk\StatisticBundle\Entity\Node $node
@@ -167,5 +143,28 @@ class NodeStat
     public function getNode()
     {
         return $this->node;
+    }
+
+    /**
+     * Set time
+     *
+     * @param \DateTime $time
+     * @return NodeStat
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+    
+        return $this;
+    }
+
+    /**
+     * Get time
+     *
+     * @return \DateTime 
+     */
+    public function getTime()
+    {
+        return $this->time;
     }
 }

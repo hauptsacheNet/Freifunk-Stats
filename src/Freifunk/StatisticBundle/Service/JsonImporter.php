@@ -72,6 +72,7 @@ class JsonImporter
         unset($string); // save some memory
         if ($data === null) {
             $log->addMessage('JSON file was invalid');
+            $log->finish();
             $this->em->persist($log);
             $this->em->flush();
             return $log;
@@ -105,6 +106,9 @@ class JsonImporter
         } catch (JsonImporterException $e) {
             $log->addMessage('essention part ' . $e->getWrongKey() . ' of the json is missing');
         }
+
+        // finish log file
+        $log->finish();
         $this->em->persist($log);
         $this->em->flush();
         return $log;
@@ -173,6 +177,7 @@ class JsonImporter
 
         // import the node
         $node = new Node();
+        $node->setTime($log->getFileTime());
         $node->setMac($data['id']);
         if ($data['geo'] != null) {
             $node->setLatitude($data['geo'][0]);
@@ -195,6 +200,7 @@ class JsonImporter
 
         // now add the node status to the existing node
         $status = new NodeStat();
+        $status->setTime($log->getFileTime());
         $status->setNode($existingNode);
         $status->setOnline((bool)$data['flags']['online']);
         $status->setClientCount(count(explode(', ', $data['macs'])));
@@ -239,11 +245,11 @@ class JsonImporter
 
         // also set all links closed if they were not listed
         $qb = $this->linkRep->createQueryBuilder('l')->update();
-        $qb->set('l.closedAt', $qb->expr()->literal(date('Y-m-d H:i:s')));
+        $qb->set('l.closeTime', $qb->expr()->literal($log->getFileTime()->format('Y-m-d H:i:s')));
         if (!empty($existing)) {
             $qb->andWhere($qb->expr()->notIn('l.id', $this->createIdList($existing)));
         }
-        $qb->andWhere($qb->expr()->isNull('l.closedAt'));
+        $qb->andWhere($qb->expr()->isNull('l.closeTime'));
         $removed = $qb->getQuery()->execute();
         $log->setLinksRemoved($removed);
     }
@@ -259,6 +265,7 @@ class JsonImporter
 
         // create the links
         $link = new Link();
+        $link->setOpenTime($log->getFileTime());
         list($target, $source) = explode('-', $data['id']);
         $link->setTarget($this->nodeRep->findByMac($target));
         $link->setSource($this->nodeRep->findByMac($source));

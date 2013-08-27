@@ -25,10 +25,18 @@ class UpdateLog
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="startTime", type="datetime")
      * @Assert\NotNull
      */
-    private $createdAt;
+    private $startTime;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="endTime", type="datetime")
+     * @Assert\NotNull
+     */
+    private $endTime;
 
     /**
      * @var \DateTime
@@ -119,7 +127,7 @@ class UpdateLog
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
+        $this->startTime = new \DateTime();
     }
 
     public function addMessage($message)
@@ -169,6 +177,11 @@ class UpdateLog
         . "\n" . 'also there were ' . $this->getStatusUpdates() . ' status updates';
     }
 
+    public function finish()
+    {
+        $this->setEndTime(new \DateTime());
+    }
+
     /**
      * Generated from here...
      */
@@ -181,29 +194,6 @@ class UpdateLog
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return UpdateLog
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 
     /**
@@ -434,5 +424,51 @@ class UpdateLog
     public function getFileSize()
     {
         return $this->fileSize;
+    }
+
+    /**
+     * Set startTime
+     *
+     * @param \DateTime $startTime
+     * @return UpdateLog
+     */
+    public function setStartTime($startTime)
+    {
+        $this->startTime = $startTime;
+
+        return $this;
+    }
+
+    /**
+     * Get startTime
+     *
+     * @return \DateTime
+     */
+    public function getStartTime()
+    {
+        return $this->startTime;
+    }
+
+    /**
+     * Set endTime
+     *
+     * @param \DateTime $endTime
+     * @return UpdateLog
+     */
+    public function setEndTime($endTime)
+    {
+        $this->endTime = $endTime;
+
+        return $this;
+    }
+
+    /**
+     * Get endTime
+     *
+     * @return \DateTime
+     */
+    public function getEndTime()
+    {
+        return $this->endTime;
     }
 }

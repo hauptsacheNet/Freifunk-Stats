@@ -111,10 +111,10 @@ class Node
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="time", type="datetime")
      * @Assert\NotNull
      */
-    private $createdAt;
+    private $time;
 
     /**
      * Constructor
@@ -122,7 +122,6 @@ class Node
     public function __construct()
     {
         $this->stats = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->createdAt = new \DateTime();
     }
     
     /**
@@ -297,29 +296,6 @@ class Node
     }
 
     /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Node
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-    
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime 
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
      * Add stats
      *
      * @param \Freifunk\StatisticBundle\Entity\NodeStat $stats
@@ -350,5 +326,94 @@ class Node
     public function getStats()
     {
         return $this->stats;
+    }
+
+    /**
+     * Add targetLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $targetLinks
+     * @return Node
+     */
+    public function addTargetLink(\Freifunk\StatisticBundle\Entity\Link $targetLinks)
+    {
+        $this->targetLinks[] = $targetLinks;
+    
+        return $this;
+    }
+
+    /**
+     * Remove targetLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $targetLinks
+     */
+    public function removeTargetLink(\Freifunk\StatisticBundle\Entity\Link $targetLinks)
+    {
+        $this->targetLinks->removeElement($targetLinks);
+    }
+
+    /**
+     * Get targetLinks
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTargetLinks()
+    {
+        return $this->targetLinks;
+    }
+
+    /**
+     * Add sourceLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $sourceLinks
+     * @return Node
+     */
+    public function addSourceLink(\Freifunk\StatisticBundle\Entity\Link $sourceLinks)
+    {
+        $this->sourceLinks[] = $sourceLinks;
+    
+        return $this;
+    }
+
+    /**
+     * Remove sourceLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $sourceLinks
+     */
+    public function removeSourceLink(\Freifunk\StatisticBundle\Entity\Link $sourceLinks)
+    {
+        $this->sourceLinks->removeElement($sourceLinks);
+    }
+
+    /**
+     * Get sourceLinks
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getSourceLinks()
+    {
+        return $this->sourceLinks;
+    }
+
+    /**
+     * Set time
+     *
+     * @param \DateTime $time
+     * @return Node
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+    
+        return $this;
+    }
+
+    /**
+     * Get time
+     *
+     * @return \DateTime 
+     */
+    public function getTime()
+    {
+        return $this->time;
     }
 }

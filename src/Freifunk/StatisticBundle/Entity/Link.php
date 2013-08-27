@@ -64,17 +64,17 @@ class Link
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="openTime", type="datetime")
      * @Assert\NotNull
      */
-    private $createdAt;
+    private $openTime;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="closedAt", type="datetime", nullable=true)
+     * @ORM\Column(name="closeTime", type="datetime", nullable=true)
      */
-    private $closedAt;
+    private $closeTime;
 
     public function __construct()
     {
@@ -207,25 +207,48 @@ class Link
     }
 
     /**
-     * Set closedAt
+     * Set openTime
      *
-     * @param \DateTime $closedAt
+     * @param \DateTime $openTime
      * @return Link
      */
-    public function setClosedAt($closedAt)
+    public function setOpenTime($openTime)
     {
-        $this->closedAt = $closedAt;
+        $this->openTime = $openTime;
     
         return $this;
     }
 
     /**
-     * Get closedAt
+     * Get openTime
      *
      * @return \DateTime 
      */
-    public function getClosedAt()
+    public function getOpenTime()
     {
-        return $this->closedAt;
+        return $this->openTime;
+    }
+
+    /**
+     * Set closeTime
+     *
+     * @param \DateTime $closeTime
+     * @return Link
+     */
+    public function setCloseTime($closeTime)
+    {
+        $this->closeTime = $closeTime;
+    
+        return $this;
+    }
+
+    /**
+     * Get closeTime
+     *
+     * @return \DateTime 
+     */
+    public function getCloseTime()
+    {
+        return $this->closeTime;
     }
 }

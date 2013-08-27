@@ -1,1 +1,40 @@
-Hello {{ name }}!
+{% extends '::base.html.twig' %}
+
+{% block body %}
+Es sind <span class="info">{{ total_nodes| default(0) }}</span> Knoten eingetragen.
+<p>
+Neue Daten pro
+Stunde: {{ logs_per_hour }}<br />
+Tag: {{ logs_per_day }}<br />
+Woche: {{ logs_per_week }}<br />
+</p>
+<table>
+    <thead>
+        <tr>
+            <th>Log-Zeit</th>
+            <th>Json-Zeit</th>
+            <th>Knoten</th>
+            <th>Status</th>
+            <th>Links</th>
+            <th>Nachricht</th>
+        </tr>
+    </thead>
+    {% for log in logs %}
+        <tr>
+            <td>{{ log.createdAt | date('Y.m.d \\u\\m H:i:s') }}</td>
+            <td>{{ log.filetime | date('Y.m.d \\u\\m H:i:s') }}</td>
+            <td>
+                <span class="info">+{{ log.nodesAdded }}</span>|{{ log.nodesPreserved }}|<span class="error">-{{ log.nodesRemoved }}</span>
+            </td>
+            <td>+{{ log.statusUpdates }}</td>
+            <td>
+                <span class="info">+{{ log.linksAdded }}</span>|{{ log.linksPreserved }}|<span class="error">-{{ log.linksRemoved }}</span>
+            </td>
+            <td>{{ log.message| nl2br }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<br />
+Aktuelle Größe der Datenbank: <span class="info">{{ table_size }}</span>
+{% endblock %}

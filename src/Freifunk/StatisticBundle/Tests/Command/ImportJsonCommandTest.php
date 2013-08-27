@@ -31,7 +31,7 @@ class ImportJsonCommandTest extends WebTestCase
     public static function validTestFiles()
     {
         return array(
-            array(__DIR__."/TestFiles/1.json")
+            array(__DIR__."/TestFiles/document.json")
         );
     }
 
@@ -50,6 +50,6 @@ class ImportJsonCommandTest extends WebTestCase
         );
 
         $result  = $commandTester->getDisplay();
-        $this->assertRegExp('/.+/', $result);
+        $this->assertRegExp('/nodes\\(new: 10, preserved: 0, removed: 0\\)\\nlinks\\(new: 1, preserved: 0, removed: 0\\)$/', $result);
     }
 }

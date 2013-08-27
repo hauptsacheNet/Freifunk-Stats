@@ -26,8 +26,7 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="nodeName", type="string", length=32)
-     * @Assert\NotNull
+     * @ORM\Column(name="nodeName", type="string", length=32, nullable=true)
      * @Assert\Length(min=1,max=32)
      * @Assert\Regex("/^[-a-zA-Z0-9_]*$/")
      */
@@ -66,8 +65,7 @@ class Node
     /**
      * @var float
      *
-     * @ORM\Column(name="latitude", type="float")
-     * @Assert\NotNull
+     * @ORM\Column(name="latitude", type="float", nullable=true)
      * @Assert\Range(min=-90, max=90)
      */
     private $latitude;
@@ -75,8 +73,7 @@ class Node
     /**
      * @var float
      *
-     * @ORM\Column(name="longitude", type="float")
-     * @Assert\NotNull
+     * @ORM\Column(name="longitude", type="float", nullable=true)
      * @Assert\Range(min=-180, max=180)
      */
     private $longitude;

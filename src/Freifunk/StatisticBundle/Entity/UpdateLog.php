@@ -39,6 +39,15 @@ class UpdateLog
     private $fileTime;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="fileSize", type="integer")
+     * @Assert\NotNull
+     * @Assert\Range(min=0, max=2147483647)
+     */
+    private $fileSize = 0;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="nodesAdded", type="integer")
@@ -131,13 +140,28 @@ class UpdateLog
 
     public function nodeRemoved()
     {
-        $this->nodesRemoved--;
+        $this->nodesRemoved++;
+    }
+
+    public function linkPreserved()
+    {
+        $this->linksPreserved++;
+    }
+
+    public function linkAdded()
+    {
+        $this->linksAdded++;
+    }
+
+    public function linkRemoved()
+    {
+        $this->linksRemoved++;
     }
 
     public function __toString()
     {
-        return 'nodes(new:' . $this->getNodesAdded() . ',preserved:' . $this->getNodesPreserved() . ',removed:' . $this->getNodesRemoved() . ')'
-        . 'links(new:' . $this->getLinksAdded() . ',preserved:' . $this->getLinksPreserved() . ',removed:' . $this->getLinksRemoved() . ')';
+        return 'nodes(new: ' . $this->getNodesAdded() . ', preserved: ' . $this->getNodesPreserved() . ', removed: ' . $this->getNodesRemoved() . ')'
+        . "\n" . 'links(new: ' . $this->getLinksAdded() . ', preserved: ' . $this->getLinksPreserved() . ', removed: ' . $this->getLinksRemoved() . ')';
     }
 
     /**
@@ -382,5 +406,28 @@ class UpdateLog
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * Set fileSize
+     *
+     * @param integer $fileSize
+     * @return UpdateLog
+     */
+    public function setFileSize($fileSize)
+    {
+        $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    /**
+     * Get fileSize
+     *
+     * @return integer
+     */
+    public function getFileSize()
+    {
+        return $this->fileSize;
     }
 }

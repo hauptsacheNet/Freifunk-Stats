@@ -40,6 +40,7 @@ class ImportJsonCommand extends ContainerAwareCommand
         /** @var JsonImporter $jsonParser */
         $jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
         $log = $jsonParser->fromFile(new FileResource($file));
+        $output->write($log->getMessage());
         $output->writeln($log->__toString());
     }
 }

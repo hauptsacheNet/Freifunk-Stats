@@ -1,1 +1,5 @@
-asd
+{% if nodes|length == 1 %}
+    Der Knoten {{ nodes[0] }} hat {{ clients }} Clients.
+{% else %}
+    Die Knoten {{ nodes|join(', ') }} haben {{ clients }} Clients.
+{% endif %}

@@ -23,5 +23,9 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument type="service" id="validator" />
         </service>
+        <service id="freifunk_statistic.widget_logger_event" class="Freifunk\StatisticBundle\Events\WidgetLogListener">
+            <tag name="kernel.event_listener" event="kernel.controller" method="onWidgetControllerCall" />
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
     </services>
 </container>

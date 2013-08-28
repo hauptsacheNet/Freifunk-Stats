@@ -41,7 +41,7 @@ class UpdateLog
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="fileTime", type="datetime", nullable=true, unique=true)
+     * @ORM\Column(name="fileTime", type="datetime", nullable=true)
      */
     private $fileTime;
 

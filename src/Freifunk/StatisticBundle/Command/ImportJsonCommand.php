@@ -19,6 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ImportJsonCommand extends ContainerAwareCommand
 {
+    /** @var JsonImporter */
+    private $jsonParser;
 
     /**
      * {@inheritdoc}
@@ -36,11 +38,26 @@ class ImportJsonCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
         $file = $input->getOption("file");
-        /** @var JsonImporter $jsonParser */
-        $jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
-        $log = $jsonParser->fromResource((new FileResource($file))->getContent());
-        $output->write($log->getMessage());
-        $output->writeln($log->__toString());
+        $this->useFile($file, $output);
+    }
+
+    private function useFile($file, OutputInterface $output)
+    {
+        if (is_dir($file)) {
+            $entries = scandir($file);
+            sort($entries);
+            foreach ($entries as $entry) {
+                if (!preg_match('/^\.{1,2}$/', $entry)) {
+                    $this->useFile($file . $entry, $output);
+                }
+            }
+        } else if (is_file($file)) {
+            $output->writeln('now parsing ' . $file);
+            $log = $this->jsonParser->fromResource($file);
+            $output->write($log->getMessage());
+            $output->writeln($log->__toString());
+        }
     }
 }

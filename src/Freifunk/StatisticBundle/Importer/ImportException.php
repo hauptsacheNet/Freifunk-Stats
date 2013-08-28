@@ -19,7 +19,7 @@ class ImportException extends \Exception
     public function __construct($key, $message = null)
     {
         if ($message == null) {
-            $message = 'json is missing the "' . $key . '" key';
+            $message = '"' . $key . '" key missing or invalid';
         }
         parent::__construct($message);
         $this->key = $key;

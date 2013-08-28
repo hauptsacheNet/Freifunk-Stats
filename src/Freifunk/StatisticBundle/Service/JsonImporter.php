@@ -21,6 +21,7 @@ use Freifunk\StatisticBundle\Entity\NodeStat;
 use Freifunk\StatisticBundle\Entity\NodeStatRepository;
 use Freifunk\StatisticBundle\Entity\UpdateLog;
 use Freifunk\StatisticBundle\Importer\Import;
+use Freifunk\StatisticBundle\Importer\ImportException;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -49,7 +50,16 @@ class JsonImporter
      */
     public function fromResource($resource)
     {
-        $import = new Import($this->em, $this->validator, $resource);
+        if (is_file($resource) && is_readable($resource)) {
+            return $this->fromString(file_get_contents($resource));
+        } else {
+            throw new ImportException(null, "The given file is not readable");
+        }
+    }
+
+    public function fromString($string)
+    {
+        $import = new Import($this->em, $this->validator, $string);
         return $import->execute();
     }
 }

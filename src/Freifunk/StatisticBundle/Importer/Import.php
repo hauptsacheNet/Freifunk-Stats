@@ -79,7 +79,7 @@ class Import
             // prepare the data our of the resource
             $this->log->setFileSize(strlen($this->string));
             if ($this->log->getFileSize() == 0) {
-                throw new ImportException(null, 'The given resource is empty or not available');
+                throw new ImportException(null, 'The given json string is empty');
             }
             $this->data = json_decode($this->string, true);
             if ($this->data === null) {
@@ -111,6 +111,7 @@ class Import
         $this->log->finish();
         $this->em->persist($this->log);
         $this->em->flush();
+        $this->em->clear();
         return $this->log;
     }
 
@@ -121,7 +122,7 @@ class Import
     {
         $this->testData($this->data['meta'], array('timestamp' => 'string'));
         $this->log->setFileTime(new \DateTime($this->data['meta']['timestamp']));
-        $lastLog = $this->logRep->getLastEntry();
+        $lastLog = $this->logRep->getLastSuccessfulEntry();
         if ($lastLog != null && $lastLog->getFileTime()->getTimestamp() >= $this->log->getFileTime()->getTimestamp()) {
             throw new ImportException(null,
                 'The specified file with the time '
@@ -159,14 +160,16 @@ class Import
             $qb->andWhere($qb->expr()->in('n.mac', array_keys($this->nodesInFile)));
         }
         // loop nodes that were already found in the database to remove them from our add list
+        $notToAdd = array();
         foreach ($qb->getQuery()->getArrayResult() as $inDbNode) {
             $mac = $inDbNode['mac'];
             if (array_key_exists($mac, $this->nodesToAdd)) {
                 $fileNode = $this->nodesToAdd[$mac];
                 unset($this->nodesToAdd[$mac]);
                 $this->log->nodePreserved();
-                // replace the node in the file with a relation one that represents the database one
+                // now we have to make references to the node so get the proxy
                 $this->nodesInFile[$mac] = $this->em->getReference('FreifunkStatisticBundle:Node', $inDbNode['id']);
+                $notToAdd[] = $inDbNode['id'];
 
                 // if the given stat is not identical to the current one in the database add it
                 /** @var NodeStat $stat */
@@ -177,6 +180,16 @@ class Import
                     $this->log->statusUpdated();
                 }
             }
+        }
+
+        // because we need the nodes later request all nodes in the database which we won't remove later
+        $qb = $this->nodeRep->createQueryBuilder('n');
+        if (!empty($notToAdd)) {
+            $qb->andWhere($qb->expr()->in('n.id', $notToAdd));
+        }
+        /** @var Node $node */
+        foreach ($qb->getQuery()->getResult() as $node) {
+            $this->nodesInFile[$node->getMac()] = $node;
         }
     }
 
@@ -257,16 +270,27 @@ class Import
         }
 
         // now remove links that are up to date already
+        $notToAdd = array();
         foreach ($qb->getQuery()->getArrayResult() as $inDbLink) {
             $linkId = $inDbLink['tMAC'] . '-' . $inDbLink['sMAC'];
             if (array_key_exists($linkId, $this->linksToAdd)) {
                 unset($this->linksToAdd[$linkId]);
                 $this->log->linkPreserved();
                 // replace the link in the file with a relation one that represents the database one
-                $this->nodesInFile[$linkId] = $this->em->getReference('FreifunkStatisticBundle:Link', $inDbLink['id']);
+                $this->linksInFile[$linkId] = $this->em->getReference('FreifunkStatisticBundle:Link', $inDbLink['id']);
+                $notToAdd[] = $inDbLink['id'];
             }
         }
 
+        // now preload the in database links
+        $qb = $this->linkRep->createQueryBuilder('l');
+        if (!empty($notToAdd)) {
+            $qb->andWhere($qb->expr()->in('l.id', $notToAdd));
+        }
+        /** @var Link $link */
+        foreach ($qb->getQuery()->getResult() as $link) {
+            $this->linksInFile[$link->getMacString()] = $link;
+        }
     }
 
     /**
@@ -283,20 +307,25 @@ class Import
             'quality' => 'string',
             'source' => 'integer',
             'target' => 'integer',
-            'type' => 'string'
+            'type' => null
         ));
 
         $link = new Link();
         $link->setOpenTime($this->log->getFileTime());
 
-        list($target, $source) = explode('-', strtoupper($data['id']));
+        //list($idSource, $idTarget) = explode('-', strtoupper($data['id']));
+        $target = strtoupper(@$this->data['nodes'][$data['target']]['id']);
+        $source = strtoupper(@$this->data['nodes'][$data['source']]['id']);
         if (array_key_exists($target, $this->nodesInFile) && array_key_exists($source, $this->nodesInFile)) {
             $link->setTarget($this->nodesInFile[$target]);
             $link->setSource($this->nodesInFile[$source]);
         } else {
-            throw new ImportException('source, target', $source . ' ' . $target);
+            throw new ImportException('source, target', $data['source'] . '|' . $source . ' ' . $data['target'] . '|' . $target);
         }
 
+        if ($data['type'] == null) {
+            $this->log->addMessage('WARNING: link ' . $data['id'] . ' has no type');
+        }
         $link->setType($data['type'] == 'client' ? Link::CLIENT : Link::VPN);
         $link->setQuality($data['quality']);
 

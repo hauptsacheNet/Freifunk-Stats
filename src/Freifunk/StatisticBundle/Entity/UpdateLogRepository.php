@@ -50,4 +50,18 @@ class UpdateLogRepository extends EntityRepository
         $qb->setMaxResults(1);
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * Gets the last log entry
+     *
+     * @return UpdateLog
+     */
+    public function getLastSuccessfulEntry()
+    {
+        $qb = $this->createQueryBuilder('l');
+        $qb->andWhere($qb->expr()->isNotNull('l.fileTime'));
+        $qb->orderBy('l.fileTime', 'DESC');
+        $qb->setMaxResults(1);
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

@@ -34,7 +34,7 @@ class JsonImportTest extends WebTestCase
         );
     }
 
-    public static function testInvalidData()
+    public static function invalidData()
     {
         return array(
             array('{}'),
@@ -57,8 +57,7 @@ class JsonImportTest extends WebTestCase
      */
     public function testFromFileError($file)
     {
-        $file = new \Assetic\Factory\Resource\FileResource($file);
-        $log = $this->getImporter()->fromResource($file->getContent());
+        $log = $this->getImporter()->fromResource($file);
         $this->assertEquals(0, $log->getNodesAdded());
         $this->assertEquals(0, $log->getNodesPreserved());
         $this->assertEquals(0, $log->getNodesRemoved());
@@ -68,11 +67,11 @@ class JsonImportTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testInvalidData
+     * @dataProvider invalidData
      */
     public function testInvalidJSON($json)
     {
-        $log = $this->getImporter()->fromResource($json);
+        $log = $this->getImporter()->fromString($json);
         $this->assertTrue($log->getMessage() != "");
     }
 

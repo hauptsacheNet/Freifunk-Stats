@@ -76,6 +76,17 @@ class Link
      */
     private $closeTime;
 
+    /**
+     * This string is to identify a link between the import and the database.
+     * It is therefore heavily used by the Import class.
+     *
+     * @return string
+     */
+    public function getMacString()
+    {
+        return $this->getTarget()->getMac() . '-' . $this->getSource()->getMac();
+    }
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
@@ -192,14 +203,14 @@ class Link
     public function setQuality($quality)
     {
         $this->quality = $quality;
-    
+
         return $this;
     }
 
     /**
      * Get quality
      *
-     * @return string 
+     * @return string
      */
     public function getQuality()
     {
@@ -215,14 +226,14 @@ class Link
     public function setOpenTime($openTime)
     {
         $this->openTime = $openTime;
-    
+
         return $this;
     }
 
     /**
      * Get openTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getOpenTime()
     {
@@ -238,14 +249,14 @@ class Link
     public function setCloseTime($closeTime)
     {
         $this->closeTime = $closeTime;
-    
+
         return $this;
     }
 
     /**
      * Get closeTime
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCloseTime()
     {

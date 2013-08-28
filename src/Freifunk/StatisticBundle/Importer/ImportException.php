@@ -2,17 +2,17 @@
 /**
  * Created by JetBrains PhpStorm.
  * User: marco
- * Date: 27.08.13
- * Time: 09:34
+ * Date: 28.08.13
+ * Time: 10:00
  * To change this template use File | Settings | File Templates.
  */
 
-namespace Freifunk\StatisticBundle\Service;
+namespace Freifunk\StatisticBundle\Importer;
 
 
 use Exception;
 
-class JsonImporterException extends \Exception
+class ImportException extends \Exception
 {
     private $key;
 
@@ -29,5 +29,4 @@ class JsonImporterException extends \Exception
     {
         return $this->key;
     }
-
 }

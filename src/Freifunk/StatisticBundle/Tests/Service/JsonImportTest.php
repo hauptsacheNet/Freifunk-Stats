@@ -12,10 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class JsonImportTest extends WebTestCase
 {
     protected static $container;
-    /** @var \Doctrine\Common\Persistence\ObjectManager */
+    /** @var \Doctrine\ORM\EntityManager */
     protected static $em;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
         self::$kernel = static::createKernel();
         self::$kernel->boot();
@@ -49,10 +49,7 @@ class JsonImportTest extends WebTestCase
      * @return \Freifunk\StatisticBundle\Service\JsonImporter
      */
     protected function getImporter () {
-        $entityManager = $this->getMockBuilder('\Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        return new \Freifunk\StatisticBundle\Service\JsonImporter($entityManager, static::$container->get("validator"));
+        return new \Freifunk\StatisticBundle\Service\JsonImporter(static::$em, static::$container->get("validator"));
     }
 
     /**
@@ -61,7 +58,7 @@ class JsonImportTest extends WebTestCase
     public function testFromFileError($file)
     {
         $file = new \Assetic\Factory\Resource\FileResource($file);
-        $log = $this->getImporter()->fromFile($file);
+        $log = $this->getImporter()->fromResource($file->getContent());
         $this->assertEquals(0, $log->getNodesAdded());
         $this->assertEquals(0, $log->getNodesPreserved());
         $this->assertEquals(0, $log->getNodesRemoved());
@@ -75,7 +72,7 @@ class JsonImportTest extends WebTestCase
      */
     public function testInvalidJSON($json)
     {
-        $log = $this->getImporter()->fromJSON($json);
+        $log = $this->getImporter()->fromResource($json);
         $this->assertTrue($log->getMessage() != "");
     }
 

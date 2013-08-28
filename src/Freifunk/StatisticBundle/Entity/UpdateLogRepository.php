@@ -20,4 +20,17 @@ class UpdateLogRepository extends EntityRepository
 
         return $count;
     }
+
+    /**
+     * Gets the last log entry
+     *
+     * @return UpdateLog
+     */
+    public function getLastEntry()
+    {
+        $qb = $this->createQueryBuilder('l');
+        $qb->orderBy('l.fileTime', 'DESC');
+        $qb->setMaxResults(1);
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

@@ -32,7 +32,7 @@ Woche: {{ logs_per_week }} (<span class="warning">{{ size_per_hour }}kb</span>)<
             <td>
                 <span class="info">+{{ log.linksAdded }}</span>|{{ log.linksPreserved }}|<span class="error">-{{ log.linksRemoved }}</span>
             </td>
-            <td>{{ log.message| nl2br }}</td>
+            <td><div class="codebox">{{ log.message| nl2br }}</div></td>
         </tr>
     {% endfor %}
 </table>

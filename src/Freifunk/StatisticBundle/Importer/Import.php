@@ -36,8 +36,6 @@ class Import
     private $validator;
     /** @var array */
     private $data;
-    /** @var int */
-    private $fileSize;
 
     /** @var UpdateLogRepository */
     private $logRep;
@@ -160,6 +158,7 @@ class Import
         if (!empty($this->nodesInFile)) {
             $qb->andWhere($qb->expr()->in('n.mac', array_keys($this->nodesInFile)));
         }
+        // loop nodes that were already found in the database to remove them from our add list
         foreach ($qb->getQuery()->getArrayResult() as $inDbNode) {
             $mac = $inDbNode['mac'];
             if (array_key_exists($mac, $this->nodesToAdd)) {

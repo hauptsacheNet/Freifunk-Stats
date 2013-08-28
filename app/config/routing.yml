@@ -1,0 +1,5 @@
+freifunk_statistic:
+    resource: "@FreifunkStatisticBundle/Controller/"
+    type:     annotation
+    prefix:   /
+

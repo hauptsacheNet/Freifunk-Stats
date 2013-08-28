@@ -2,9 +2,40 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}Freifunk-Stats{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
-        <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+        <style>
+            .info { color: #5CDB5D; }
+            .error { color: #EE5A60; }
+
+            th {
+                border-top: 0 none;
+                border-bottom: 2px solid #DDDDDD;
+                vertical-align: bottom;
+                text-align: left;
+            }
+
+            td {
+                border-top: 1px solid #DDDDDD;
+                line-height: 1.42857;
+                padding: 8px;
+                vertical-align: top;
+            }
+
+           table {
+                border-collapse: collapse;
+                border-spacing: 0;
+                width: 90%;
+            }
+
+            body {
+                color: #333333;
+                font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+                font-size: 14px;
+                line-height: 1.42857;
+            }
+            .codebox { max-height: 200px !important; overflow: auto; }
+        </style>
     </head>
     <body>
         {% block body %}{% endblock %}

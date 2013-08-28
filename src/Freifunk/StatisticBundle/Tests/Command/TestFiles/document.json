@@ -1,0 +1,160 @@
+{
+    "nodes": [
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.600378,
+                9.872321
+            ],
+            "macs": "64:70:02:b5:d9:26, 66:70:02:b5:d9:26, 66:70:02:b5:d9:27, 66:70:02:b6:d9:26",
+            "name": "brachvogel05",
+            "id": "66:70:02:b5:d9:26"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                52.978157,
+                10.572892
+            ],
+            "macs": "a2:f3:c1:05:77:f4, a2:f3:c1:06:77:f2, a0:f3:c1:05:77:f2",
+            "name": "OW-UE-1",
+            "id": "a0:f3:c1:05:77:f2"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.58427996453954,
+                9.743741154670715
+            ],
+            "macs": "da:5d:4c:9c:30:cb, d8:5d:4c:9c:30:ca, da:5d:4c:9d:30:ca",
+            "name": "Freifunk-d85d4c9c30ca",
+            "id": "da:5d:4c:9c:30:cb"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": null,
+            "macs": "66:70:02:f5:a5:e6, 66:70:02:f4:a5:e7, 64:70:02:f4:a5:e6",
+            "name": "Freifunk4Eimsbush",
+            "id": "66:70:02:f4:a5:e7"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.594762,
+                9.9515
+            ],
+            "macs": "a0:f3:c1:36:ab:bc, a2:f3:c1:37:ab:bc, a2:f3:c1:36:ab:bd",
+            "name": "Freifunk-a0f3c136abbc",
+            "id": "a2:f3:c1:36:ab:bd"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.446679,
+                10.12668
+            ],
+            "macs": "64:70:02:52:bd:62, 66:70:02:53:bd:62, 66:70:02:52:bd:63",
+            "name": "Exil-Garage",
+            "id": "66:70:02:52:bd:63"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.565395,
+                9.962068
+            ],
+            "macs": "a2:f3:c1:05:6f:4d, a0:f3:c1:05:6f:4c, a2:f3:c1:06:6f:4c",
+            "name": "manda_freifunk",
+            "id": "a2:f3:c1:05:6f:4d"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.469928,
+                9.854173
+            ],
+            "macs": "a2:f3:c1:83:0c:dc, a2:f3:c1:82:0c:dd, a0:f3:c1:82:0c:dc",
+            "name": "GrummelGriesgram",
+            "id": "a2:f3:c1:82:0c:dd"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.493588,
+                10.201907
+            ],
+            "macs": "f8:d1:11:94:a2:8a, fa:d1:11:95:a2:8a, fa:d1:11:94:a2:8b",
+            "name": "schnurzipurzel",
+            "id": "fa:d1:11:94:a2:8b"
+        },
+        {
+            "flags": {
+                "client": false,
+                "gateway": false,
+                "online": true
+            },
+            "geo": [
+                53.516117,
+                9.994919
+            ],
+            "macs": "b0:48:7a:eb:6a:22, b2:48:7a:eb:6a:23, b2:48:7a:ec:6a:22",
+            "name": "Stan",
+            "id": "b2:48:7a:eb:6a:23"
+        }
+    ],
+    "meta": {
+        "timestamp": "2013-08-26T16:04:35"
+    },
+    "links": [
+        {
+            "id": "a0:f3:c1:05:77:f2-66:70:02:b5:d9:26",
+            "source": 0,
+            "quality": "1.214, 2.297",
+            "target": 1,
+            "type": "vpn"
+        },
+        {
+            "id": "20:16:d8:a3:2e:29-66:70:02:4c:38:39",
+            "source": 142,
+            "quality": "TT",
+            "target": 669,
+            "type": "client"
+        }
+    ]
+}

@@ -5,5 +5,8 @@
 {% endblock %}
 
 {% block widget_html %}
-Knotenname: {{ node.nodeName }}
+    Knotenname{% if nodes|length > 1 %}n{% endif %}:
+    {% for n in nodes %}
+        {{ n.nodeName }}{% if not loop.last %}, {% endif %}
+    {% endfor %}<br />
 {% endblock %}

@@ -10,6 +10,7 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 
 /**
  * Class DefaultController
+ *
  * @package Freifunk\StatisticBundle\Controller
  *
  * @Route("/widget")
@@ -21,25 +22,26 @@ class WidgetController extends Controller
      * First Widget, very basic. Just displays the number of clients per node.
      * Example request: `/test?node=<mac-address>`
      *
-     * @param string  $nodeName
+     * @param Request  $request
+     * @param string   $id
      *
      * @return array
      *
-     * @Route("/test/{nodeName}")
+     * @Route("/test/{id}")
      * @Template()
      */
-    public function indexAction($nodeName)
+    public function indexAction(Request $request, $id)
     {
         $manager = $this->getDoctrine()->getManager();
-        $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $stat_repository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
+        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
+        $statRepository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
 
-        $node = $node_repository->findOneBy(array(
-            'nodeName' => $nodeName
+        $node = $nodeRepository->findOneBy(array(
+            'nodeName' => $request->query->get('node')
         ));
 
         if ($node) {
-            $stats = $stat_repository->getLastStatOf($node);
+            $stats = $statRepository->getLastStatOf($node);
             $clients = $stats->getClientCount();
 
             return array(
@@ -55,44 +57,47 @@ class WidgetController extends Controller
      * Returns a nice graph that displays all Clients for
      * the nodes over the selected period of time.
      *
-     * @param string  $nodeName
+     * @param Request  $request
+     * @param int      $id
      *
      * @return array
      *
-     * @Route("/clients/{nodeName}")
+     * @Route("/clients/{id}")
      * @Template()
      */
-    public function clientsPerHourAction($nodeName)
+    public function clientsPerHourAction(Request $request, $id)
     {
 
         $manager = $this->getDoctrine()->getManager();
-        $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $link_repository = $manager->getRepository('FreifunkStatisticBundle:Link');
+        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
+        $linkRepository = $manager->getRepository('FreifunkStatisticBundle:Link');
 
         $series = array();
 
-        $node = $node_repository->findOneBy(array(
-            'nodeName' => $nodeName
+        $nodes = $nodeRepository->findBy(array(
+            'nodeName' => $request->query->get('node')
         ));
 
-        if ($node) {
-            $stats = array();
-            $now = new \DateTime();
-            foreach (range(1, 24) as $h) {
-                $stats[] = $link_repository->countLinksForNodeBetween($node, $now, $now->modify('-1 hour'));
-            }
+        foreach ($nodes as $node) {
 
-            if (!$stats) {
-                $series[] = array(
-                    'name' => $nodeName,
-                    'data' => $stats
-                );
-            }
+            if ($node) {
+                $stats = array();
+                $now = new \DateTime();
+                foreach (range(1, 24) as $h) {
+                    $stats[] = $linkRepository->countLinksForNodeBetween($node, $now->modify('-1 hour'), $now->modify('+1 hour'));
+                }
 
+                if ($stats) {
+                    $series[] = array(
+                        'name' => $node->getNodeName(),
+                        'data' => $stats
+                    );
+                }
+            }
         }
 
         $ob = new Highchart();
-        $ob->chart->renderTo('linechart');
+        $ob->chart->renderTo($id);
         $ob->chart->type('column');
 
         $ob->title->text('Clients pro Knoten');
@@ -105,7 +110,7 @@ class WidgetController extends Controller
         $ob->series($series);
 
         return array(
-            'node' => $node,
+            'nodes' => $nodes,
             'chart' => $ob
         );
     }

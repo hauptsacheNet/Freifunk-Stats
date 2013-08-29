@@ -59,6 +59,9 @@ class ImportJsonCommand extends ContainerAwareCommand
             $log = $this->jsonParser->fromResource($file);
             $output->write($log->getMessage());
             $output->writeln($log->__toString());
+            if ($remove) {
+                unlink($file);
+            }
         }
     }
 }

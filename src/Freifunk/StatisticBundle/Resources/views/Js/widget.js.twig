@@ -1,7 +1,7 @@
 {#}
 <script>{##}
     (function () {
-        var HOST = '{{ baseurl|raw }}';
+        var HOST = '{{ app.request.SchemeAndHttpHost|raw }}{{ app.request.baseUrl|raw }}';
         var scripts = [
             {
                 src: 'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',

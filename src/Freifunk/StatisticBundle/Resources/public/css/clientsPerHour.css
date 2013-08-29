@@ -1,0 +1,23 @@
+.freifunk-cph-widget {
+    font: normal normal normal 12pt/1.2em verdana, sans-serif !important;
+    display: block !important;
+    width: 25em;
+    height: 9.375em;
+    background-position: top right;
+    background-repeat: no-repeat;
+    border: .4em solid #ffcb05;
+    border-radius: .6em;
+    overflow: hidden;
+}
+
+.freifunk-cph-widget .freifunk-facts {
+    width: 6.25em;
+    height: 100%;
+    float: right;
+}
+
+.freifunk-cph-widget .freifunk-chart {
+    width: 18.75em;
+    height: 100%;
+    float: left;
+}

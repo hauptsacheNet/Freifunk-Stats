@@ -82,11 +82,16 @@ class WidgetController extends Controller
 
             if ($node) {
                 $stats = array();
-                $now = new \DateTime("-23 hour");
-                $last = new \DateTime("-24 hour");
+                $now = new \DateTime("-22 hour");
+                $now->setTime($now->format('H'), 0, 0);
+                $last = new \DateTime("-23 hour");
+                $last->setTime($last->format('H'), 0, 0);
 
                 foreach (range(1, 24) as $h) {
-                    $stats[] = $linkRepository->countLinksForNodeBetween($node, $last, $now);
+                    $stats[] = array(
+                        $now->getTimestamp() * 1000,
+                        $linkRepository->countLinksForNodeBetween($node, $last, $now)
+                    );
                     $now->modify("+1 hour");
                     $last->modify("+1 hour");
                 }
@@ -102,13 +107,11 @@ class WidgetController extends Controller
 
         $ob = new Highchart();
         $ob->chart->renderTo($id . '_chart');
-        $ob->chart->type('column');
+        $ob->chart->type('line');
 
-        $ob->title->text('Clients pro Knoten');
-
+        $ob->title->text(null);
         $ob->xAxis->title(array('text'  => "Zeitspanne"));
-        $ob->xAxis->categories(range(1, 24));
-
+        $ob->xAxis->type('datetime');
         $ob->yAxis->title(array('text'  => "Anzahl von Clients"));
 
         $ob->series($series);

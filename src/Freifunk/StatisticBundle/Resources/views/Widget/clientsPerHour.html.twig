@@ -1,15 +1,34 @@
 {% extends 'FreifunkStatisticBundle::widget.html.twig' %}
 
 {% block additional_javascript %}
-    {{ chart(chart) }}
+    {%- spaceless %}
+        {{ chart(chart) }}
+    {% endspaceless %}
+{% endblock %}
+
+{% block css_files %}
+    {%- spaceless %}
+        {% stylesheets 'bundles/freifunkstatistic/css/clientsPerHour.css' filter='cssrewrite' %}
+            '{{ asset_url }}'
+        {% endstylesheets %}
+    {% endspaceless %}
 {% endblock %}
 
 {% block widget_html %}
+    {%- spaceless %}
+    <div class="freifunk-cph-widget" style="background-image: url({{ app.request.SchemeAndHttpHost|raw }}{{ asset('bundles/freifunkstatistic/img/freifunk.gif') }})">
+        <div class="freifunk-facts">
+
+        </div>
+        <div id="{{ append_id }}_chart" class="freifunk-chart" style="height: 200px"></div>
+    </div>
+    {#
     Knotenname{% if nodes|length > 1 %}n{% endif %}:
     {% for n in nodes %}
         {{ n.nodeName }}{% if not loop.last %}, {% endif %}
     {% endfor %}<br />
-    <div id="{{ append_id }}_chart"></div>
+    #}
+    {% endspaceless %}
 {% endblock %}
 
 {% block append_id %}{{ append_id }}{% endblock %}

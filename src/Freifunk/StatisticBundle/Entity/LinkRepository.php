@@ -52,6 +52,6 @@ class LinkRepository extends EntityRepository
                 2 => $end,
                 3 => $start
             ));
-        return $query->getSingleScalarResult();
+        return (int)$query->getSingleScalarResult();
     }
 }

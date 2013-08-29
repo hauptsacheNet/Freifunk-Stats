@@ -1,8 +1,9 @@
-{% extends '::widget.html.twig' %}
-{% block body %}
-<script type="text/javascript">
-    {{ chart(chart) }}
-</script>
+{% extends 'FreifunkStatisticBundle::widget.html.twig' %}
 
-<div id="linechart" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+{% block additional_javascript %}
+    {{ chart(chart) }}
+{% endblock %}
+
+{% block widget_html %}
+Knotenname: {{ node.nodeName }}
 {% endblock %}

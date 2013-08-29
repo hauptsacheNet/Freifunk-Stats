@@ -52,12 +52,6 @@ class WidgetLogListener
             //$this->manager->persist($widget);
             //$this->manager->flush();
 
-            $params = $request->query->all();
-
-            if (empty($params) || !isset($params['node'])) {
-                throw new NotFoundHttpException('Keine Knoten angegeben.');
-            }
-            $controller[0]->nodes = (is_string($params['node'])) ? array($params['node']) : $params['node'];
         }
 
         $event->setController($controller);

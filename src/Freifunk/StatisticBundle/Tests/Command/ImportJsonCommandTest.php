@@ -1,22 +1,21 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: marco
- * Date: 26.08.13
- * Time: 15:45
- * To change this template use File | Settings | File Templates.
- */
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use \Freifunk\StatisticBundle\Command\ImportJsonCommand;
 
+/**
+ * Class ImportJsonCommandTest
+ */
 class ImportJsonCommandTest extends WebTestCase
 {
     /** @var \Doctrine\Common\Persistence\ObjectManager */
     protected $em;
 
+    /**
+     * {@inheritDocs}
+     */
     public static function setUpBeforeClass()
     {
         static::$kernel = static::createKernel();
@@ -32,6 +31,9 @@ class ImportJsonCommandTest extends WebTestCase
         static::$kernel->shutdown();
     }
 
+    /**
+     * {@inheritDocs}
+     */
     protected function setUp()
     {
         static::$kernel = static::createKernel();
@@ -39,6 +41,11 @@ class ImportJsonCommandTest extends WebTestCase
         $this->em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
     }
 
+    /**
+     * Provides valid test files
+     *
+     * @return array
+     */
     public static function validTestFiles()
     {
         return array(
@@ -64,9 +71,16 @@ class ImportJsonCommandTest extends WebTestCase
     }
 
     /**
+     * Tests normal parsing.
+     *
+     * @param string $file
+     * @param array  $nodeUpdates
+     * @param array  $linkUpdates
+     * @param int    $statusUpdates
+     *
      * @dataProvider validTestFiles
      */
-    public function testNormalParse($file, $nodeUpdates, $linkUpdates, $statusUpdateds)
+    public function testNormalParse($file, $nodeUpdates, $linkUpdates, $statusUpdates)
     {
         $application = new Application(static::$kernel);
         $application->add(new ImportJsonCommand());
@@ -79,8 +93,8 @@ class ImportJsonCommandTest extends WebTestCase
 
         $result = $commandTester->getDisplay();
         $this->assertRegExp('/nodes\\(new: ' . $nodeUpdates[0] . ', preserved: ' . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
-        . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: ' . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
-        . '\\nalso there were ' . $statusUpdateds . ' status updates$/', $result);
+            . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: ' . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
+            . '\\nalso there were ' . $statusUpdates . ' status updates$/', $result);
 
         $this->assertTrue(file_exists($file));
     }

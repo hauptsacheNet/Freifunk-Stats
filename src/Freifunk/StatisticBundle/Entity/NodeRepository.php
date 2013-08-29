@@ -14,13 +14,15 @@ class NodeRepository extends EntityRepository
 {
 
     /**
-     * @param $mac
+     * @param string $mac
+     *
      * @return Node
      */
     public function findByMac($mac)
     {
         $qb = $this->createQueryBuilder("n");
         $qb->andWhere($qb->expr()->eq("n.mac", $qb->expr()->literal($mac)));
+
         return $qb->getQuery()->getOneOrNullResult();
     }
     /**

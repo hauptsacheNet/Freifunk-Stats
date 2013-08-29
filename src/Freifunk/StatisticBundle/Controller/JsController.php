@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class JsController
+ *
  * @package Freifunk\StatisticBundle\Controller
  *
  * @Route("/js")
@@ -17,6 +18,12 @@ use Symfony\Component\HttpFoundation\Response;
 class JsController extends Controller
 {
     /**
+     * Generates the dynamic widget loader.
+     *
+     * @param Request $request
+     *
+     * @return $response
+     *
      * @Route("/widget")
      */
     public function widgetJsAction(Request $request)

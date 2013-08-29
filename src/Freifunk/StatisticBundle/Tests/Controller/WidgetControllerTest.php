@@ -5,8 +5,16 @@ namespace Freifunk\StatisticBundle\Tests\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+/**
+ * Class WidgetControllerTest
+ *
+ * @package Freifunk\StatisticBundle\Tests\Controller
+ */
 class WidgetControllerTest extends WebTestCase
 {
+    /**
+     * Tests if there are no nodes given on a widget call.
+     */
     public function testNoNodeForWidget()
     {
         $client = static::createClient();

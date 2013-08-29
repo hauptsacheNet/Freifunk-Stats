@@ -16,6 +16,7 @@ class LinkRepository extends EntityRepository
 {
     /**
      * @param Link $link
+     *
      * @return Link
      */
     public function findExistingLink(Link $link)
@@ -25,6 +26,7 @@ class LinkRepository extends EntityRepository
         $qb->andWhere($qb->expr()->eq('l.target', $qb->expr()->literal($link->getTarget()->getId())));
         $qb->andWhere($qb->expr()->eq('l.type', $qb->expr()->literal($link->getType())));
         $qb->andWhere($qb->expr()->isNull('l.closeTime'));
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -53,6 +55,7 @@ class LinkRepository extends EntityRepository
                 3 => $start,
                 4 => Link::CLIENT
             ));
-        return (int)$query->getSingleScalarResult();
+
+        return (int) $query->getSingleScalarResult();
     }
 }

@@ -10,3 +10,5 @@
         {{ n.nodeName }}{% if not loop.last %}, {% endif %}
     {% endfor %}<br />
 {% endblock %}
+
+{% block append_id %}{{ id }}{% endblock %}

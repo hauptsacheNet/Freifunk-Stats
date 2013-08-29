@@ -111,7 +111,8 @@ class WidgetController extends Controller
 
         return array(
             'nodes' => $nodes,
-            'chart' => $ob
+            'chart' => $ob,
+            'id' => $id
         );
     }
 }

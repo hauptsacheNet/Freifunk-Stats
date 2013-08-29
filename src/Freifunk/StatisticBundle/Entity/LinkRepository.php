@@ -22,7 +22,7 @@ class LinkRepository extends EntityRepository
         $qb->andWhere($qb->expr()->eq('l.source', $qb->expr()->literal($link->getSource()->getId())));
         $qb->andWhere($qb->expr()->eq('l.target', $qb->expr()->literal($link->getTarget()->getId())));
         $qb->andWhere($qb->expr()->eq('l.type', $qb->expr()->literal($link->getType())));
-        $qb->andWhere($qb->expr()->isNull('l.closedAt'));
+        $qb->andWhere($qb->expr()->isNull('l.closeTime'));
         return $qb->getQuery()->getOneOrNullResult();
     }
 }

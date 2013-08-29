@@ -81,5 +81,7 @@ class ImportJsonCommandTest extends WebTestCase
         $this->assertRegExp('/nodes\\(new: ' . $nodeUpdates[0] . ', preserved: ' . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
         . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: ' . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
         . '\\nalso there were ' . $statusUpdateds . ' status updates$/', $result);
+
+        $this->assertTrue(file_exists($file));
     }
 }

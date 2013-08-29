@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Freifunk\StatisticBundle\Controller\WidgetController;
 use Doctrine\Common\Persistence\ObjectManager;
 use Freifunk\StatisticBundle\Entity\Widget;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class WidgetLogListener
@@ -44,10 +45,19 @@ class WidgetLogListener
 
             $widget->setRequest($request->getUri());
             $widget->setReferer($request->headers->get('referer'));
+            $widget->setIp($request->getClientIp());
+            $widget->setUserAgent($request->headers->get('user-agent'));
 
-            $this->manager->persist($widget);
-            $this->manager->flush();
+            // todo: reactivate this!!!
+            //$this->manager->persist($widget);
+            //$this->manager->flush();
 
+            $params = $request->query->all();
+
+            if (empty($params) || !isset($params['node'])) {
+                throw new NotFoundHttpException('Keine Knoten angegeben.');
+            }
+            $controller[0]->nodes = (is_string($params['node'])) ? array($params['node']) : $params['node'];
         }
 
         $event->setController($controller);

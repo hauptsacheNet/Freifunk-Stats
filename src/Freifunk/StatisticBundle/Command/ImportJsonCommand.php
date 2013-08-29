@@ -30,7 +30,8 @@ class ImportJsonCommand extends ContainerAwareCommand
         $this
             ->setName('freifunk:import-json')
             ->setDescription('puts the data of the specified file into the database')
-            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'The json file to be read');
+            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'The json file to be read')
+            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'If the file should be removed afterwards');
     }
 
     /**
@@ -40,17 +41,17 @@ class ImportJsonCommand extends ContainerAwareCommand
     {
         $this->jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
         $file = $input->getOption("file");
-        $this->useFile($file, $output);
+        $this->useFile($file, $output, $input->hasOption('remove'));
     }
 
-    private function useFile($file, OutputInterface $output)
+    private function useFile($file, OutputInterface $output, $remove)
     {
         if (is_dir($file)) {
             $entries = scandir($file);
             sort($entries);
             foreach ($entries as $entry) {
                 if (!preg_match('/^\.{1,2}$/', $entry)) {
-                    $this->useFile($file . $entry, $output);
+                    $this->useFile($file . $entry, $output, $remove);
                 }
             }
         } else if (is_file($file)) {

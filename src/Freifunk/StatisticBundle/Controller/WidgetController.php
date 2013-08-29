@@ -17,40 +17,38 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 class WidgetController extends Controller
 {
 
-    /** @var array */
-    public $nodes;
-
     /**
      * First Widget, very basic. Just displays the number of clients per node.
      * Example request: `/test?node=<mac-address>`
      *
+     * @param string  $nodeName
+     *
      * @return array
      *
-     * @Route("/test")
+     * @Route("/test/{nodeName}")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction($nodeName)
     {
         $manager = $this->getDoctrine()->getManager();
         $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
         $stat_repository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
 
-        $clients = 0;
-        foreach ($this->nodes as $mac) {
+        $node = $node_repository->findOneBy(array(
+            'nodeName' => $nodeName
+        ));
 
-            $node = $node_repository->findByMac($mac);
+        if ($node) {
+            $stats = $stat_repository->getLastStatOf($node);
+            $clients = $stats->getClientCount();
 
-            if ($node) {
-                $stats = $stat_repository->getLastStatOf($node);
-                $clients += $stats->getClientCount();
-            }
-
+            return array(
+                'node' => $node,
+                'clients' => $clients
+            );
         }
 
-        return array(
-            'nodes' => $this->nodes,
-            'clients' => $clients
-        );
+        return $this->createNotFoundException('Knoten nicht gefunden');
     }
 
     /**
@@ -64,7 +62,7 @@ class WidgetController extends Controller
      * @Route("/clients/{nodeName}")
      * @Template()
      */
-    public function clientsPerTimeAction($nodeName)
+    public function clientsPerHourAction($nodeName)
     {
 
         $manager = $this->getDoctrine()->getManager();

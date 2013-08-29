@@ -55,14 +55,14 @@ class WidgetController extends Controller
      * Returns a nice graph that displays all Clients for
      * the nodes over the selected period of time.
      *
-     * @param string  $nodeName
+     * @param Request  $request
      *
      * @return array
      *
-     * @Route("/clients/{nodeName}")
+     * @Route("/clients")
      * @Template()
      */
-    public function clientsPerHourAction($nodeName)
+    public function clientsPerHourAction(Request $request)
     {
 
         $manager = $this->getDoctrine()->getManager();
@@ -71,24 +71,25 @@ class WidgetController extends Controller
 
         $series = array();
 
-        $node = $node_repository->findOneBy(array(
-            'nodeName' => $nodeName
-        ));
+        foreach ($request->query->get('node') as $nodeName) {
+            $node = $node_repository->findOneBy(array(
+                'nodeName' => $nodeName
+            ));
 
-        if ($node) {
-            $stats = array();
-            $now = new \DateTime();
-            foreach (range(1, 24) as $h) {
-                $stats[] = $link_repository->countLinksForNodeBetween($node, $now, $now->modify('-1 hour'));
+            if ($node) {
+                $stats = array();
+                $now = new \DateTime();
+                foreach (range(1, 24) as $h) {
+                    $stats[] = $link_repository->countLinksForNodeBetween($node, $now->modify('-1 hour'), $now->modify('+1 hour'));
+                }
+
+                if ($stats) {
+                    $series[] = array(
+                        'name' => $nodeName,
+                        'data' => $stats
+                    );
+                }
             }
-
-            if (!$stats) {
-                $series[] = array(
-                    'name' => $nodeName,
-                    'data' => $stats
-                );
-            }
-
         }
 
         $ob = new Highchart();
@@ -105,7 +106,7 @@ class WidgetController extends Controller
         $ob->series($series);
 
         return array(
-            'node' => $node,
+            'nodeNames' => $request->query->get('node'),
             'chart' => $ob
         );
     }

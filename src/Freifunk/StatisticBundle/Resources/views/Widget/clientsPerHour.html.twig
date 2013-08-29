@@ -5,5 +5,5 @@
 {% endblock %}
 
 {% block widget_html %}
-Knotenname: {{ node.nodeName }}
+    Knotenname{% if nodeNames|length > 1 %}n{% endif %}: {{ nodeNames|join(', ') }}
 {% endblock %}

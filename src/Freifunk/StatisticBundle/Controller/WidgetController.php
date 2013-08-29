@@ -21,21 +21,22 @@ class WidgetController extends Controller
      * First Widget, very basic. Just displays the number of clients per node.
      * Example request: `/test?node=<mac-address>`
      *
-     * @param string  $nodeName
+     * @param Request  $request
+     * @param string   $id
      *
      * @return array
      *
-     * @Route("/test/{nodeName}")
+     * @Route("/test/{id}")
      * @Template()
      */
-    public function indexAction($nodeName)
+    public function indexAction(Request $request, $id)
     {
         $manager = $this->getDoctrine()->getManager();
         $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
         $stat_repository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
 
         $node = $node_repository->findOneBy(array(
-            'nodeName' => $nodeName
+            'nodeName' => $request->query->get('node')
         ));
 
         if ($node) {
@@ -56,13 +57,14 @@ class WidgetController extends Controller
      * the nodes over the selected period of time.
      *
      * @param Request  $request
+     * @param int      $id
      *
      * @return array
      *
-     * @Route("/clients")
+     * @Route("/clients/{id}")
      * @Template()
      */
-    public function clientsPerHourAction(Request $request)
+    public function clientsPerHourAction(Request $request, $id)
     {
 
         $manager = $this->getDoctrine()->getManager();
@@ -71,10 +73,11 @@ class WidgetController extends Controller
 
         $series = array();
 
-        foreach ($request->query->get('node') as $nodeName) {
-            $node = $node_repository->findOneBy(array(
-                'nodeName' => $nodeName
-            ));
+        $nodes = $node_repository->findBy(array(
+            'nodeName' => $request->query->get('node')
+        ));
+
+        foreach ($nodes as $node) {
 
             if ($node) {
                 $stats = array();
@@ -85,7 +88,7 @@ class WidgetController extends Controller
 
                 if ($stats) {
                     $series[] = array(
-                        'name' => $nodeName,
+                        'name' => $node->getNodeName(),
                         'data' => $stats
                     );
                 }
@@ -93,7 +96,7 @@ class WidgetController extends Controller
         }
 
         $ob = new Highchart();
-        $ob->chart->renderTo('linechart');
+        $ob->chart->renderTo($id);
         $ob->chart->type('column');
 
         $ob->title->text('Clients pro Knoten');
@@ -106,7 +109,7 @@ class WidgetController extends Controller
         $ob->series($series);
 
         return array(
-            'nodeNames' => $request->query->get('node'),
+            'nodes' => $nodes,
             'chart' => $ob
         );
     }

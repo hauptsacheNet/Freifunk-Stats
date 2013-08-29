@@ -45,12 +45,13 @@ class LinkRepository extends EntityRepository
                 WHERE
                     l.source = ?1
                     AND l.openTime <= ?2
-                    AND (l.closeTime >= ?3
-                      OR l.closeTime IS NULL)')
+                    AND (l.closeTime >= ?3 OR l.closeTime IS NULL)
+                    AND l.type = ?4')
             ->setParameters(array(
                 1 => $node->getId(),
                 2 => $end,
-                3 => $start
+                3 => $start,
+                4 => Link::CLIENT
             ));
         return (int)$query->getSingleScalarResult();
     }

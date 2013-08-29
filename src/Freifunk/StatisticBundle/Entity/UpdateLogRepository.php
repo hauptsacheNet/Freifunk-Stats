@@ -13,10 +13,13 @@ use Doctrine\ORM\EntityRepository;
 class UpdateLogRepository extends EntityRepository
 {
     /**
-     * @param $timestamp
+     * Finds all logs after $timestamp
+     *
+     * @param \DateTime $timestamp
+     *
      * @return mixed
      */
-    public function findLogsAfter($timestamp)
+    public function findLogsAfter(\DateTime $timestamp)
     {
         $manager = $this->getEntityManager();
         $query = $manager->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
@@ -26,10 +29,13 @@ class UpdateLogRepository extends EntityRepository
     }
 
     /**
-     * @param $timestamp
+     * Finds the `.json` filesize of multiple logs
+     *
+     * @param \DateTime $timestamp
+     *
      * @return mixed
      */
-    public function findLogSizeAfter($timestamp)
+    public function findLogSizeAfter(\DateTime $timestamp)
     {
         $manager = $this->getEntityManager();
         $query = $manager->createQuery('SELECT SUM(l.fileSize) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
@@ -48,6 +54,7 @@ class UpdateLogRepository extends EntityRepository
         $qb = $this->createQueryBuilder('l');
         $qb->orderBy('l.fileTime', 'DESC');
         $qb->setMaxResults(1);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -62,6 +69,7 @@ class UpdateLogRepository extends EntityRepository
         $qb->andWhere($qb->expr()->isNotNull('l.fileTime'));
         $qb->orderBy('l.fileTime', 'DESC');
         $qb->setMaxResults(1);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 }

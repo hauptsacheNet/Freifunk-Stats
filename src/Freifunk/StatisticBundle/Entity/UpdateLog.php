@@ -124,52 +124,85 @@ class UpdateLog
      */
     private $message = "";
 
-
+    /**
+     * Constructor
+     *
+     * @return UpdateLog
+     */
     public function __construct()
     {
         $this->startTime = new \DateTime();
     }
 
+    /**
+     * @param string $message
+     */
     public function addMessage($message)
     {
         $this->message .= $message . "\n";
     }
 
+    /**
+     * Increases `nodesPreserved` counter.
+     */
     public function nodePreserved()
     {
         $this->nodesPreserved++;
     }
 
+    /**
+     * Increases `nodesAdded` counter.
+     */
     public function nodeAdded()
     {
         $this->nodesAdded++;
     }
 
+    /**
+     * Increases `nodeRemoved` counter.
+     */
     public function nodeRemoved()
     {
         $this->nodesRemoved++;
     }
 
+    /**
+     * Increases `LinksPreserved` counter.
+     */
     public function linkPreserved()
     {
         $this->linksPreserved++;
     }
 
+    /**
+     * Increases `LinksAdded` counter.
+     */
     public function linkAdded()
     {
         $this->linksAdded++;
     }
 
+    /**
+     * Increases `LinksRemoved` counter.
+     */
     public function linkRemoved()
     {
         $this->linksRemoved++;
     }
 
+    /**
+     * Increases `statusUpdates` counter.
+     */
     public function statusUpdated()
     {
         $this->statusUpdates++;
     }
 
+    /**
+     * __toString method
+     *
+     * @return string
+     */
     public function __toString()
     {
         return 'nodes(new: ' . $this->getNodesAdded() . ', preserved: ' . $this->getNodesPreserved() . ', removed: ' . $this->getNodesRemoved() . ')'

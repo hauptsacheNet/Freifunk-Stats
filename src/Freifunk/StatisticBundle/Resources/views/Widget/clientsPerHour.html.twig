@@ -9,6 +9,7 @@
     {% for n in nodes %}
         {{ n.nodeName }}{% if not loop.last %}, {% endif %}
     {% endfor %}<br />
+    <div id="{{ append_id }}_chart"></div>
 {% endblock %}
 
 {% block append_id %}{{ append_id }}{% endblock %}

@@ -14,7 +14,7 @@
 </html>
 #}
 
-$("#{{ block('append_id') }}").append($.parseHTML("{{ block('widget_html')|replace({'"': '\\"', '\n': '\\n'}) }}"));
+$("#{{ block('append_id') }}").append($.parseHTML("{{ block('widget_html')|replace({'"': '\\"', '\n': '\\n'})|raw }}"));
 
 {% block additional_javascript %}
 {% endblock %}

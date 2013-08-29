@@ -101,7 +101,7 @@ class WidgetController extends Controller
         }
 
         $ob = new Highchart();
-        $ob->chart->renderTo($id);
+        $ob->chart->renderTo($id . '_chart');
         $ob->chart->type('column');
 
         $ob->title->text('Clients pro Knoten');

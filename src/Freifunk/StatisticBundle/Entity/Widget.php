@@ -78,12 +78,13 @@ class Widget
      * Set referer
      *
      * @param string $referer
+     *
      * @return Widget
      */
     public function setReferer($referer)
     {
         $this->referer = $referer;
-    
+
         return $this;
     }
 
@@ -101,12 +102,13 @@ class Widget
      * Set request
      *
      * @param string $request
+     *
      * @return Widget
      */
     public function setRequest($request)
     {
         $this->request = $request;
-    
+
         return $this;
     }
 
@@ -124,6 +126,7 @@ class Widget
      * Set the IP
      *
      * @param string $ip
+     *
      * @return Widget
      */
     public function setIp($ip)
@@ -145,6 +148,7 @@ class Widget
      * Set the timestamp
      *
      * @param \DateTime $timestamp
+     *
      * @return Widget
      */
     public function setTimestamp($timestamp)
@@ -166,6 +170,7 @@ class Widget
      * Set user agent
      *
      * @param string $userAgent
+     *
      * @return Widget
      */
     public function setUserAgent($userAgent)

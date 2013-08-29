@@ -151,45 +151,45 @@ class Import
         }
 
         // filter nodes that already exist
-        $this->nodesToAdd = $this->nodesInFile;
-        $qb = $this->nodeStatRep->createQueryBuilder('s');
-        $qb->join('s.node', 'n');
-        $qb->select('n.id, n.mac, s.online, s.clientCount');
-        $qb->orderBy('s.time', 'DESC');
         if (!empty($this->nodesInFile)) {
+            $this->nodesToAdd = $this->nodesInFile;
+            $qb = $this->nodeStatRep->createQueryBuilder('s');
+            $qb->join('s.node', 'n');
+            $qb->select('n.id, n.mac, s.online, s.clientCount');
+            $qb->orderBy('s.time', 'DESC');
             $qb->andWhere($qb->expr()->in('n.mac', array_keys($this->nodesInFile)));
-        }
-        // loop nodes that were already found in the database to remove them from our add list
-        $notToAdd = array();
-        foreach ($qb->getQuery()->getArrayResult() as $inDbNode) {
-            $mac = $inDbNode['mac'];
-            if (array_key_exists($mac, $this->nodesToAdd)) {
-                $fileNode = $this->nodesToAdd[$mac];
-                unset($this->nodesToAdd[$mac]);
-                $this->log->nodePreserved();
-                // now we have to make references to the node so get the proxy
-                $this->nodesInFile[$mac] = $this->em->getReference('FreifunkStatisticBundle:Node', $inDbNode['id']);
-                $notToAdd[] = $inDbNode['id'];
+            // loop nodes that were already found in the database to remove them from our add list
+            $notToAdd = array();
+            foreach ($qb->getQuery()->getArrayResult() as $inDbNode) {
+                $mac = $inDbNode['mac'];
+                if (array_key_exists($mac, $this->nodesToAdd)) {
+                    $fileNode = $this->nodesToAdd[$mac];
+                    unset($this->nodesToAdd[$mac]);
+                    $this->log->nodePreserved();
+                    // now we have to make references to the node so get the proxy
+                    $this->nodesInFile[$mac] = $this->em->getReference('FreifunkStatisticBundle:Node', $inDbNode['id']);
+                    $notToAdd[] = $inDbNode['id'];
 
-                // if the given stat is not identical to the current one in the database add it
-                /** @var NodeStat $stat */
-                $stat = $fileNode->getStats()->last();
-                if ($stat->getOnline() != $inDbNode['online'] || $stat->getClientCount() != $inDbNode['clientCount']) {
-                    $stat->setNode($this->nodesInFile[$mac]);
-                    $this->statsToAdd[] = $stat;
-                    $this->log->statusUpdated();
+                    // if the given stat is not identical to the current one in the database add it
+                    /** @var NodeStat $stat */
+                    $stat = $fileNode->getStats()->last();
+                    if ($stat->getOnline() != $inDbNode['online'] || $stat->getClientCount() != $inDbNode['clientCount']) {
+                        $stat->setNode($this->nodesInFile[$mac]);
+                        $this->statsToAdd[] = $stat;
+                        $this->log->statusUpdated();
+                    }
                 }
             }
-        }
 
-        // because we need the nodes later request all nodes in the database which we won't remove later
-        $qb = $this->nodeRep->createQueryBuilder('n');
-        if (!empty($notToAdd)) {
-            $qb->andWhere($qb->expr()->in('n.id', $notToAdd));
-        }
-        /** @var Node $node */
-        foreach ($qb->getQuery()->getResult() as $node) {
-            $this->nodesInFile[$node->getMac()] = $node;
+            // because we need the nodes later request all nodes in the database which we won't remove later
+            if (!empty($notToAdd)) {
+                $qb = $this->nodeRep->createQueryBuilder('n');
+                $qb->andWhere($qb->expr()->in('n.id', $notToAdd));
+                /** @var Node $node */
+                foreach ($qb->getQuery()->getResult() as $node) {
+                    $this->nodesInFile[$node->getMac()] = $node;
+                }
+            }
         }
     }
 
@@ -252,13 +252,13 @@ class Import
 
         // filter links that already exist
         $this->linksToAdd = $this->linksInFile;
-        $qb = $this->linkRep->createQueryBuilder('l');
-        $qb->select('l.id, target.mac AS tMAC, source.mac AS sMAC');
-        $qb->join('l.target', 'target');
-        $qb->join('l.source', 'source');
-        $qb->andWhere($qb->expr()->isNull('l.closeTime'));
-
         if (!empty($this->linksInFile)) {
+            $qb = $this->linkRep->createQueryBuilder('l');
+            $qb->select('l.id, target.mac AS tMAC, source.mac AS sMAC');
+            $qb->join('l.target', 'target');
+            $qb->join('l.source', 'source');
+            $qb->andWhere($qb->expr()->isNull('l.closeTime'));
+
             $linkSearch = $qb->expr()->orX();
             foreach ($this->linksInFile as $link) {
                 $linkSearch->add($qb->expr()->andX(
@@ -267,29 +267,29 @@ class Import
                 ));
             }
             $qb->andWhere($linkSearch);
-        }
 
-        // now remove links that are up to date already
-        $notToAdd = array();
-        foreach ($qb->getQuery()->getArrayResult() as $inDbLink) {
-            $linkId = $inDbLink['tMAC'] . '-' . $inDbLink['sMAC'];
-            if (array_key_exists($linkId, $this->linksToAdd)) {
-                unset($this->linksToAdd[$linkId]);
-                $this->log->linkPreserved();
-                // replace the link in the file with a relation one that represents the database one
-                $this->linksInFile[$linkId] = $this->em->getReference('FreifunkStatisticBundle:Link', $inDbLink['id']);
-                $notToAdd[] = $inDbLink['id'];
+            // now remove links that are up to date already
+            $notToAdd = array();
+            foreach ($qb->getQuery()->getArrayResult() as $inDbLink) {
+                $linkId = $inDbLink['tMAC'] . '-' . $inDbLink['sMAC'];
+                if (array_key_exists($linkId, $this->linksToAdd)) {
+                    unset($this->linksToAdd[$linkId]);
+                    $this->log->linkPreserved();
+                    // replace the link in the file with a relation one that represents the database one
+                    $this->linksInFile[$linkId] = $this->em->getReference('FreifunkStatisticBundle:Link', $inDbLink['id']);
+                    $notToAdd[] = $inDbLink['id'];
+                }
             }
-        }
 
-        // now preload the in database links
-        $qb = $this->linkRep->createQueryBuilder('l');
-        if (!empty($notToAdd)) {
-            $qb->andWhere($qb->expr()->in('l.id', $notToAdd));
-        }
-        /** @var Link $link */
-        foreach ($qb->getQuery()->getResult() as $link) {
-            $this->linksInFile[$link->getMacString()] = $link;
+            // now preload the in database links
+            if (!empty($notToAdd)) {
+                $qb = $this->linkRep->createQueryBuilder('l');
+                $qb->andWhere($qb->expr()->in('l.id', $notToAdd));
+                /** @var Link $link */
+                foreach ($qb->getQuery()->getResult() as $link) {
+                    $this->linksInFile[$link->getMacString()] = $link;
+                }
+            }
         }
     }
 

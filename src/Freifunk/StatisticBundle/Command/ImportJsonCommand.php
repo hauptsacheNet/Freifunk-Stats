@@ -41,7 +41,7 @@ class ImportJsonCommand extends ContainerAwareCommand
     {
         $this->jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
         $file = $input->getOption("file");
-        $this->useFile($file, $output, $input->hasOption('remove'));
+        $this->useFile($file, $output, $input->getOption('remove'));
     }
 
     private function useFile($file, OutputInterface $output, $remove)

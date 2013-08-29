@@ -53,7 +53,12 @@ class JsonImporter
         if (is_file($resource) && is_readable($resource)) {
             return $this->fromString(file_get_contents($resource));
         } else {
-            throw new ImportException(null, "The given file is not readable");
+            $log = new UpdateLog();
+            $log->addMessage('The given json is not readable');
+            $log->finish();
+            $this->em->persist($log);
+            $this->em->flush();
+            return $log;
         }
     }
 

@@ -4,6 +4,7 @@ namespace Freifunk\StatisticBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Freifunk\StatisticBundle\Entity\Node;
+use Freifunk\StatisticBundle\Entity\Link;
 
 /**
  * LinkRepository
@@ -39,7 +40,13 @@ class LinkRepository extends EntityRepository
     public function countLinksForNodeBetween(Node $node, \DateTime $start, \DateTime $end)
     {
         $query = $this->getEntityManager()
-            ->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\Link l WHERE (l.source = ?1 OR l.target = ?1) AND l.openTime >= ?2 AND l.closeTime <= ?3')
+            ->createQuery('SELECT COUNT(l.source)
+                FROM FreifunkStatisticBundle:Link l
+                WHERE
+                    l.source = ?1
+                    AND l.openTime <= ?3
+                    AND (l.closeTime >= ?2
+                      OR l.closeTime IS NULL)')
             ->setParameters(array(
                 1 => $node->getId(),
                 2 => $start,

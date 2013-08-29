@@ -82,9 +82,13 @@ class WidgetController extends Controller
 
             if ($node) {
                 $stats = array();
-                $now = new \DateTime();
+                $now = new \DateTime("-24 hour");
+                $last = new \DateTime("-23 hour");
+
                 foreach (range(1, 24) as $h) {
-                    $stats[] = $linkRepository->countLinksForNodeBetween($node, $now->modify('-1 hour'), $now->modify('+1 hour'));
+                    $stats[] = $linkRepository->countLinksForNodeBetween($node, $last, $now);
+                    $now->modify("+1 hour");
+                    $last->modify("+1 hour");
                 }
 
                 if ($stats) {
@@ -95,6 +99,9 @@ class WidgetController extends Controller
                 }
             }
         }
+
+        var_dump($stats);
+        exit;
 
         $ob = new Highchart();
         $ob->chart->renderTo($id);
@@ -111,7 +118,8 @@ class WidgetController extends Controller
 
         return array(
             'nodes' => $nodes,
-            'chart' => $ob
+            'chart' => $ob,
+            'append_id' => $id
         );
     }
 }

@@ -386,7 +386,7 @@ class Import
             $qb->andWhere($expr);
         }
         $qb->andWhere($qb->expr()->isNull('l.closeTime'));
-        $qb->set('l.closeTime', $qb->expr()->literal(date('Y-m-d H:i:s')));
+        $qb->set('l.closeTime', $qb->expr()->literal($this->log->getFileTime()->format('Y-m-d H:i:s')));
         $this->log->setLinksRemoved($qb->getQuery()->execute());
     }
 

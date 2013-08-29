@@ -8,6 +8,7 @@
  */
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Freifunk\StatisticBundle\Service\JsonImporter;
 
 /**
  * Class JsonImportTest
@@ -69,7 +70,10 @@ class JsonImportTest extends WebTestCase
      */
     protected function getImporter ()
     {
-        return new \Freifunk\StatisticBundle\Service\JsonImporter(static::$em, static::$container->get("validator"));
+        return new JsonImporter(
+            static::$em,
+            static::$container->get("validator")
+        );
     }
 
     /**

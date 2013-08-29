@@ -21,7 +21,9 @@ class ImportJsonCommandTest extends WebTestCase
         static::$kernel = static::createKernel();
         static::$kernel->boot();
         /** @var \Doctrine\Common\Persistence\ObjectManager $em */
-        $em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $em = static::$kernel->getContainer()
+            ->get('doctrine.orm.entity_manager');
+
         $metadatas = $em->getMetadataFactory()->getAllMetadata();
         if (!empty($metadatas)) {
             $tool = new \Doctrine\ORM\Tools\SchemaTool($em);
@@ -38,7 +40,8 @@ class ImportJsonCommandTest extends WebTestCase
     {
         static::$kernel = static::createKernel();
         static::$kernel->boot();
-        $this->em = static::$kernel->getContainer()->get('doctrine.orm.entity_manager');
+        $this->em = static::$kernel->getContainer()
+            ->get('doctrine.orm.entity_manager');
     }
 
     /**
@@ -64,7 +67,7 @@ class ImportJsonCommandTest extends WebTestCase
             array(
                 __DIR__ . "/TestFiles/document 3.json",
                 array(0, 0, 8),
-                array(0, 0, 0), // zero links because they will be removed if the node is removed
+                array(0, 0, 0),
                 0
             )
         );
@@ -92,9 +95,14 @@ class ImportJsonCommandTest extends WebTestCase
         );
 
         $result = $commandTester->getDisplay();
-        $this->assertRegExp('/nodes\\(new: ' . $nodeUpdates[0] . ', preserved: ' . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
-            . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: ' . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
-            . '\\nalso there were ' . $statusUpdates . ' status updates$/', $result);
+        $this->assertRegExp(
+            '/nodes\\(new: ' . $nodeUpdates[0] . ', preserved: '
+                . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
+                . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: '
+                . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
+                . '\\nalso there were ' . $statusUpdates . ' status updates$/',
+            $result
+        );
 
         $this->assertTrue(file_exists($file));
     }

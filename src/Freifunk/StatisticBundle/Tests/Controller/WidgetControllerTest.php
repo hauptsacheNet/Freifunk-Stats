@@ -22,7 +22,11 @@ class WidgetControllerTest extends WebTestCase
         $crawler = $client->request('GET', '/widget/test/id');
 
         $response = $client->getResponse();
+
         $this->assertTrue($response->isNotFound());
-        $this->assertRegExp('/Keine Knoten angegeben/', $client->getResponse()->getContent());
+        $this->assertRegExp(
+            '/Keine Knoten angegeben/',
+            $client->getResponse()->getContent()
+        );
     }
 }

@@ -33,8 +33,12 @@ class WidgetController extends Controller
     public function indexAction(Request $request, $id)
     {
         $manager = $this->getDoctrine()->getManager();
-        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $statRepository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
+        $nodeRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Node'
+        );
+        $statRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:NodeStat'
+        );
 
         $node = $nodeRepository->findOneBy(array(
             'nodeName' => $request->query->get('node')
@@ -69,8 +73,12 @@ class WidgetController extends Controller
     {
 
         $manager = $this->getDoctrine()->getManager();
-        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $linkRepository = $manager->getRepository('FreifunkStatisticBundle:Link');
+        $nodeRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Node'
+        );
+        $linkRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Link'
+        );
 
         $series = array();
 
@@ -86,7 +94,11 @@ class WidgetController extends Controller
                 $last = new \DateTime("-24 hour");
 
                 foreach (range(1, 24) as $h) {
-                    $stats[] = $linkRepository->countLinksForNodeBetween($node, $last, $now);
+                    $stats[] = $linkRepository->countLinksForNodeBetween(
+                        $node,
+                        $last,
+                        $now
+                    );
                     $now->modify("+1 hour");
                     $last->modify("+1 hour");
                 }

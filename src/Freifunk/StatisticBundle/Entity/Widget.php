@@ -8,7 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Widget
  *
  * @ORM\Table()
- * @ORM\Entity(repositoryClass="Freifunk\StatisticBundle\Entity\WidgetRepository")
+ * @ORM\Entity(
+ *      repositoryClass="Freifunk\StatisticBundle\Entity\WidgetRepository"
+ * )
  */
 class Widget
 {

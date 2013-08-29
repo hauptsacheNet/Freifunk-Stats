@@ -50,7 +50,10 @@ class GetJsonCommandTest extends WebTestCase
         $command = $application->find('freifunk:get-json');
         $commandTester = new CommandTester($command);
         $commandTester->execute(
-            array('command' => $command->getName(), '--dir' => '/tmp/testGetJsonCommand/')
+            array(
+                'command' => $command->getName(),
+                '--dir' => '/tmp/testGetJsonCommand/'
+            )
         );
 
         $result  = $commandTester->getDisplay();

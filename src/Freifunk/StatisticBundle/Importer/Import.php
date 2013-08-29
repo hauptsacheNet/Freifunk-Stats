@@ -59,6 +59,15 @@ class Import
     /** @var NodeStat[] */
     private $statsToAdd = array();
 
+    /**
+     * Constructor
+     *
+     * @param EntityManager $em
+     * @param Validator     $validator
+     * @param string        $string
+     *
+     * @return Import
+     */
     public function __construct(EntityManager $em, Validator $validator, $string)
     {
         $this->em = $em;
@@ -70,6 +79,11 @@ class Import
         $this->string = $string;
     }
 
+    /**
+     * Executes the importer
+     *
+     * @return UpdateLog
+     */
     public function execute()
     {
         // create log
@@ -112,6 +126,7 @@ class Import
         $this->em->persist($this->log);
         $this->em->flush();
         $this->em->clear();
+
         return $this->log;
     }
 
@@ -197,6 +212,7 @@ class Import
      * Creates a node instances of the json part
      *
      * @param array $data
+     *
      * @return Node
      */
     private function createNodeInstance(array $data)
@@ -223,12 +239,13 @@ class Import
         $status = new NodeStat();
         $status->setTime($this->log->getFileTime());
         $status->setNode($node);
-        $status->setOnline((bool)$data['flags']['online']);
+        $status->setOnline((bool) $data['flags']['online']);
         $status->setClientCount(count(explode(', ', $data['macs'])));
         $this->validate($status);
         $node->addStat($status);
 
         $this->validate($node);
+
         return $node;
     }
 
@@ -297,7 +314,9 @@ class Import
      * Creates a Link instance out of the json part
      *
      * @param array $data
+     *
      * @return Link
+     *
      * @throws ImportException
      */
     private function createLinkInstance(array $data)
@@ -330,6 +349,7 @@ class Import
         $link->setQuality($data['quality']);
 
         $this->validate($link);
+
         return $link;
     }
 
@@ -398,8 +418,10 @@ class Import
     }
 
     /**
-     * @param array $data
+     * @param array &$data
+     *
      * @param array $keys
+     *
      * @throws ImportException
      */
     private static function testData(array &$data, array $keys)
@@ -413,7 +435,8 @@ class Import
     }
 
     /**
-     * @param $entity
+     * @param Object $entity
+     *
      * @throws ImportException
      */
     private function validate($entity)

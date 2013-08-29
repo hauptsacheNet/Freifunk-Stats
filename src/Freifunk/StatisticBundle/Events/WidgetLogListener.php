@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class WidgetLogListener
+ *
  * @package Freifunk\StatisticBundle\Events
  */
 class WidgetLogListener

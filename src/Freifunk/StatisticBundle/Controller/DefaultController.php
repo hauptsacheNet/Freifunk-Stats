@@ -8,12 +8,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * Class DefaultController
+ *
  * @package Freifunk\StatisticBundle\Controller
  */
 class DefaultController extends Controller
 {
     /**
      * Just some basic statistic generation
+     *
+     * @return array
      *
      * @Route("/")
      * @Template()

@@ -39,12 +39,12 @@ class LinkRepository extends EntityRepository
     public function countLinksForNodeBetween(Node $node, \DateTime $start, \DateTime $end)
     {
         $query = $this->getEntityManager()
-            ->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\Link l WHERE l.node = ?1 AND l.createdAt = ?2 AND l.closedAt = ?3')
+            ->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\Link l WHERE (l.source = ?1 OR l.target = ?1) AND l.createdAt = ?2 AND l.closedAt = ?3')
             ->setParameters(array(
                 1 => $node->getId(),
-                2 => $start->getTimestamp(),
-                3 => $end->getTimestamp()
+                2 => $start,
+                3 => $end
             ));
-        return $query->getOneOrNullResult();
+        return $query->getSingleScalarResult();
     }
 }

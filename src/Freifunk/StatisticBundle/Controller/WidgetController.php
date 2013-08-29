@@ -17,54 +17,52 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 class WidgetController extends Controller
 {
 
-    /** @var array */
-    public $nodes;
-
     /**
      * First Widget, very basic. Just displays the number of clients per node.
      * Example request: `/test?node=<mac-address>`
      *
+     * @param string  $nodeName
+     *
      * @return array
      *
-     * @Route("/test")
+     * @Route("/test/{nodeName}")
      * @Template()
      */
-    public function indexAction()
+    public function indexAction($nodeName)
     {
         $manager = $this->getDoctrine()->getManager();
         $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
         $stat_repository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
 
-        $clients = 0;
-        foreach ($this->nodes as $mac) {
+        $node = $node_repository->findOneBy(array(
+            'nodeName' => $nodeName
+        ));
 
-            $node = $node_repository->findByMac($mac);
+        if ($node) {
+            $stats = $stat_repository->getLastStatOf($node);
+            $clients = $stats->getClientCount();
 
-            if ($node) {
-                $stats = $stat_repository->getLastStatOf($node);
-                $clients += $stats->getClientCount();
-            }
-
+            return array(
+                'node' => $node,
+                'clients' => $clients
+            );
         }
 
-        return array(
-            'nodes' => $this->nodes,
-            'clients' => $clients
-        );
+        return $this->createNotFoundException('Knoten nicht gefunden');
     }
 
     /**
      * Returns a nice graph that displays all Clients for
      * the nodes over the selected period of time.
      *
-     * @param string  $period_of_time
+     * @param string  $nodeName
      *
      * @return array
      *
-     * @Route("/clients/{period_of_time}")
+     * @Route("/clients/{nodeName}")
      * @Template()
      */
-    public function clientsPerTimeAction($period_of_time)
+    public function clientsPerHourAction($nodeName)
     {
 
         $manager = $this->getDoctrine()->getManager();
@@ -72,22 +70,25 @@ class WidgetController extends Controller
         $link_repository = $manager->getRepository('FreifunkStatisticBundle:Link');
 
         $series = array();
-        $now = new \DateTime();
-        foreach ($this->nodes as $mac) {
 
-            $node = $node_repository->findByMac($mac);
+        $node = $node_repository->findOneBy(array(
+            'nodeName' => $nodeName
+        ));
 
-            if ($node) {
-                $stats = $link_repository->countLinksForNodeBetween($node, $now, $now->modify('-1 day'));
+        if ($node) {
+            $stats = array();
+            $now = new \DateTime();
+            foreach (range(1, 24) as $h) {
+                $stats[] = $link_repository->countLinksForNodeBetween($node, $now, $now->modify('-1 hour'));
+            }
 
-                if (!$stats)
-                    continue;
-
+            if (!$stats) {
                 $series[] = array(
-                    'name' => $mac,
-                    'data' => array($stats[1])
+                    'name' => $nodeName,
+                    'data' => $stats
                 );
             }
+
         }
 
         $ob = new Highchart();
@@ -104,6 +105,7 @@ class WidgetController extends Controller
         $ob->series($series);
 
         return array(
+            'node' => $node,
             'chart' => $ob
         );
     }

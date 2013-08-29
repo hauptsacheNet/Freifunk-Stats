@@ -1,0 +1,9 @@
+{% extends 'FreifunkStatisticBundle::widget.html.twig' %}
+
+{% block additional_javascript %}
+    {{ chart(chart) }}
+{% endblock %}
+
+{% block widget_html %}
+Knotenname: {{ node.nodeName }}
+{% endblock %}

@@ -16,6 +16,7 @@ class LinkRepository extends EntityRepository
 {
     /**
      * @param Link $link
+     *
      * @return Link
      */
     public function findExistingLink(Link $link)
@@ -25,6 +26,7 @@ class LinkRepository extends EntityRepository
         $qb->andWhere($qb->expr()->eq('l.target', $qb->expr()->literal($link->getTarget()->getId())));
         $qb->andWhere($qb->expr()->eq('l.type', $qb->expr()->literal($link->getType())));
         $qb->andWhere($qb->expr()->isNull('l.closeTime'));
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -53,6 +55,36 @@ class LinkRepository extends EntityRepository
                 3 => $start,
                 4 => Link::CLIENT
             ));
-        return (int)$query->getSingleScalarResult();
+
+        return (int) $query->getSingleScalarResult();
+    }
+
+    /**
+     * Returns the number of unique     links for a node between 2 dates
+     *
+     * @param Node      $node
+     * @param \DateTime $start
+     * @param \DateTime $end
+     *
+     * @return mixed
+     */
+    public function countUniqueLinksForNodeBetween(Node $node, \DateTime $start, \DateTime $end)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery('SELECT COUNT(DISTINCT l.source)
+                FROM FreifunkStatisticBundle:Link l
+                WHERE
+                    l.source = ?1
+                    AND l.openTime <= ?2
+                    AND (l.closeTime >= ?3 OR l.closeTime IS NULL)
+                    AND l.type = ?4')
+            ->setParameters(array(
+                1 => $node->getId(),
+                2 => $end,
+                3 => $start,
+                4 => Link::CLIENT
+            ));
+
+        return (int) $query->getSingleScalarResult();
     }
 }

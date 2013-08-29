@@ -120,6 +120,7 @@ class Node
      * Set mac
      *
      * @param string $mac
+     *
      * @return Node
      */
     public function setMac($mac)
@@ -140,7 +141,7 @@ class Node
     {
         $this->stats = new \Doctrine\Common\Collections\ArrayCollection();
     }
-    
+
     /**
      * Get id
      *
@@ -155,12 +156,13 @@ class Node
      * Set nodeName
      *
      * @param string $nodeName
+     *
      * @return Node
      */
     public function setNodeName($nodeName)
     {
         $this->nodeName = $nodeName;
-    
+
         return $this;
     }
 
@@ -178,12 +180,13 @@ class Node
      * Set realName
      *
      * @param string $realName
+     *
      * @return Node
      */
     public function setRealName($realName)
     {
         $this->realName = $realName;
-    
+
         return $this;
     }
 
@@ -201,6 +204,7 @@ class Node
      * Set email
      *
      * @param string $email
+     *
      * @return Node
      */
     public function setEmail($email)
@@ -234,12 +238,13 @@ class Node
      * Set latitude
      *
      * @param float $latitude
+     *
      * @return Node
      */
     public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
-    
+
         return $this;
     }
 
@@ -257,12 +262,13 @@ class Node
      * Set longitude
      *
      * @param float $longitude
+     *
      * @return Node
      */
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
-    
+
         return $this;
     }
 
@@ -280,12 +286,13 @@ class Node
      * Set fastdKey
      *
      * @param string $fastdKey
+     *
      * @return Node
      */
     public function setFastdKey($fastdKey)
     {
         $this->fastdKey = strtolower($fastdKey);
-    
+
         return $this;
     }
 
@@ -303,6 +310,7 @@ class Node
      * Add stats
      *
      * @param \Freifunk\StatisticBundle\Entity\NodeStat $stats
+     *
      * @return Node
      */
     public function addStat(\Freifunk\StatisticBundle\Entity\NodeStat $stats)
@@ -336,6 +344,7 @@ class Node
      * Add targetLinks
      *
      * @param \Freifunk\StatisticBundle\Entity\Link $targetLinks
+     *
      * @return Node
      */
     public function addTargetLink(\Freifunk\StatisticBundle\Entity\Link $targetLinks)
@@ -369,6 +378,7 @@ class Node
      * Add sourceLinks
      *
      * @param \Freifunk\StatisticBundle\Entity\Link $sourceLinks
+     *
      * @return Node
      */
     public function addSourceLink(\Freifunk\StatisticBundle\Entity\Link $sourceLinks)
@@ -402,6 +412,7 @@ class Node
      * Set time
      *
      * @param \DateTime $time
+     *
      * @return Node
      */
     public function setTime($time)

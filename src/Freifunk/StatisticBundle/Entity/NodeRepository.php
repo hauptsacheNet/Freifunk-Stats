@@ -3,6 +3,7 @@
 namespace Freifunk\StatisticBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * NodeRepository
@@ -14,15 +15,41 @@ class NodeRepository extends EntityRepository
 {
 
     /**
-     * @param $mac
+     * @param string $mac
+     *
      * @return Node
      */
     public function findByMac($mac)
     {
         $qb = $this->createQueryBuilder("n");
         $qb->andWhere($qb->expr()->eq("n.mac", $qb->expr()->literal($mac)));
+
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * Finds one or multiple nodes by their name(s)
+     *
+     * @param mixed $node
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function findByNodeName($node)
+    {
+        if (is_null($node)) {
+            throw new NotFoundHttpException('Keine Knoten angegeben.');
+        }
+
+        $nodes = (!is_array($node)) ? array($node) : $node;
+
+        $qb = $this->createQueryBuilder('n');
+        $qb->andWhere($qb->expr()->in('n.nodeName', $nodes));
+
+        return $qb->getQuery()->getResult();
+    }
+
     /**
      * Counts all nodes in the database.
      *
@@ -31,7 +58,7 @@ class NodeRepository extends EntityRepository
     public function countAllNodes()
     {
         $manager = $this->getEntityManager();
-        $query = $manager->createQuery('SELECT COUNT(n.id) FROM Freifunk\\StatisticBundle\\Entity\\Node n');
+        $query = $manager->createQuery('SELECT COUNT(n.id) FROM FreifunkStatisticBundle:Node n');
         $count = $query->getSingleScalarResult();
 
         return $count;

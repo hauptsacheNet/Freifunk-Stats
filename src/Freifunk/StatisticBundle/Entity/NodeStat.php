@@ -55,10 +55,20 @@ class NodeStat
      */
     private $time;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
     }
 
+    /**
+     * Compares two `NodeStat` entities
+     *
+     * @param NodeStat $other
+     *
+     * @return bool
+     */
     public function equals(NodeStat $other)
     {
         return $this->node == $other->node
@@ -80,6 +90,7 @@ class NodeStat
      * Set online
      *
      * @param boolean $online
+     *
      * @return NodeStat
      */
     public function setOnline($online)
@@ -103,6 +114,7 @@ class NodeStat
      * Set clientCount
      *
      * @param integer $clientCount
+     *
      * @return NodeStat
      */
     public function setClientCount($clientCount)
@@ -126,6 +138,7 @@ class NodeStat
      * Set node
      *
      * @param \Freifunk\StatisticBundle\Entity\Node $node
+     *
      * @return NodeStat
      */
     public function setNode(\Freifunk\StatisticBundle\Entity\Node $node = null)
@@ -149,12 +162,13 @@ class NodeStat
      * Set time
      *
      * @param \DateTime $time
+     *
      * @return NodeStat
      */
     public function setTime($time)
     {
         $this->time = $time;
-    
+
         return $this;
     }
 

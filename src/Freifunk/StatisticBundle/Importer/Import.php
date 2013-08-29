@@ -24,7 +24,8 @@ use Freifunk\StatisticBundle\Service\JsonImporter;
 use Symfony\Component\Validator\Validator;
 
 /**
- * This class represents an import action. This means it should be created for one import only.
+ * This class represents an import action.
+ * This means it should be created for one import only.
  *
  * @package Freifunk\StatisticBundle\Importer
  */
@@ -93,11 +94,17 @@ class Import
             // prepare the data our of the resource
             $this->log->setFileSize(strlen($this->string));
             if ($this->log->getFileSize() == 0) {
-                throw new ImportException(null, 'The given json string is empty');
+                throw new ImportException(
+                    null,
+                    'The given json string is empty'
+                );
             }
             $this->data = json_decode($this->string, true);
             if ($this->data === null) {
-                throw new ImportException(null, 'The JSON was not well formated (' . json_last_error() . ')');
+                throw new ImportException(
+                    null,
+                    'The JSON was not well formated (' . json_last_error() . ')'
+                );
             }
 
             $this->testData($this->data, array(

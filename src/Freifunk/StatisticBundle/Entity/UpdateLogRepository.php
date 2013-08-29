@@ -22,7 +22,9 @@ class UpdateLogRepository extends EntityRepository
     public function findLogsAfter(\DateTime $timestamp)
     {
         $manager = $this->getEntityManager();
-        $query = $manager->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
+        $query = $manager->createQuery(
+            'SELECT COUNT(l.id) FROM FreifunkStatisticBundle:UpdateLog l WHERE l.fileTime > ?1'
+        );
         $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
 
         return $count;
@@ -38,7 +40,9 @@ class UpdateLogRepository extends EntityRepository
     public function findLogSizeAfter(\DateTime $timestamp)
     {
         $manager = $this->getEntityManager();
-        $query = $manager->createQuery('SELECT SUM(l.fileSize) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
+        $query = $manager->createQuery(
+            'SELECT SUM(l.fileSize) FROM FreifunkStatisticBundle:UpdateLog l WHERE l.fileTime > ?1'
+        );
         $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
 
         return $count;

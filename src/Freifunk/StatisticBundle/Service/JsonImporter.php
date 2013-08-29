@@ -27,6 +27,11 @@ use Symfony\Component\Validator\ConstraintViolationInterface;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator;
 
+/**
+ * Class JsonImporter
+ *
+ * @package Freifunk\StatisticBundle\Service
+ */
 class JsonImporter
 {
     /** @var EntityManager */
@@ -36,7 +41,9 @@ class JsonImporter
 
     /**
      * @param EntityManager $em
-     * @param Validator $validator
+     * @param Validator     $validator
+     *
+     * @return JsonImporter
      */
     public function __construct(EntityManager $em, Validator $validator)
     {
@@ -45,12 +52,16 @@ class JsonImporter
     }
 
     /**
+     * Imports .json file from resource
+     *
      * @param string $resource
+     *
      * @return UpdateLog
      */
     public function fromResource($resource)
     {
         if (is_file($resource) && is_readable($resource)) {
+
             return $this->fromString(file_get_contents($resource));
         } else {
             $log = new UpdateLog();
@@ -58,13 +69,22 @@ class JsonImporter
             $log->finish();
             $this->em->persist($log);
             $this->em->flush();
+
             return $log;
         }
     }
 
+    /**
+     * Imports json directly from a string.
+     *
+     * @param string $string
+     *
+     * @return UpdateLog
+     */
     public function fromString($string)
     {
         $import = new Import($this->em, $this->validator, $string);
+
         return $import->execute();
     }
 }

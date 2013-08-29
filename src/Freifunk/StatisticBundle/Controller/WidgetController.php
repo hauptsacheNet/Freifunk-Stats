@@ -20,7 +20,7 @@ class WidgetController extends Controller
 
     /**
      * First Widget, very basic. Just displays the number of clients per node.
-     * Example request: `/test?node=<mac-address>`
+     * Example request: `/test/div?node=<nodeName>
      *
      * @param Request  $request
      * @param string   $id
@@ -33,12 +33,16 @@ class WidgetController extends Controller
     public function indexAction(Request $request, $id)
     {
         $manager = $this->getDoctrine()->getManager();
-        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $statRepository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
+        $nodeRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Node'
+        );
+        $statRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:NodeStat'
+        );
 
-        $node = $nodeRepository->findOneBy(array(
-            'nodeName' => $request->query->get('node')
-        ));
+        $node = $nodeRepository->findByNodeName(
+            $request->query->get('node')
+        );
 
         if ($node) {
             $stats = $statRepository->getLastStatOf($node);
@@ -46,7 +50,8 @@ class WidgetController extends Controller
 
             return array(
                 'node' => $node,
-                'clients' => $clients
+                'clients' => $clients,
+                'append_id' => $id
             );
         }
 
@@ -69,14 +74,18 @@ class WidgetController extends Controller
     {
 
         $manager = $this->getDoctrine()->getManager();
-        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $linkRepository = $manager->getRepository('FreifunkStatisticBundle:Link');
+        $nodeRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Node'
+        );
+        $linkRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Link'
+        );
 
         $series = array();
 
-        $nodes = $nodeRepository->findBy(array(
-            'nodeName' => $request->query->get('node')
-        ));
+        $nodes = $nodeRepository->findByNodeName(
+            $request->query->get('node')
+        );
 
         foreach ($nodes as $node) {
 

@@ -19,9 +19,10 @@ class WidgetControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/widget/test');
+        $crawler = $client->request('GET', '/widget/test/id');
 
-        //$this->assertTrue($crawler->getInfo());
-        $this->assertTrue($crawler->filter('html:contains("Keine Knoten angegeben.")')->count() > 0);
+        $response = $client->getResponse();
+        $this->assertTrue($response->isNotFound());
+        $this->assertRegExp('/Keine Knoten angegeben/', $client->getResponse()->getContent());
     }
 }

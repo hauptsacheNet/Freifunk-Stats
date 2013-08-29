@@ -1,0 +1,75 @@
+{#}
+<script>{##}
+    (function () {
+        var HOST = '{{ baseurl|raw }}';
+        var scripts = [
+            {
+                src: 'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
+                check: function () {
+                    return !!(window.jQuery && jQuery.fn && jQuery.fn.jquery);
+                    // TODO check version in jQuery.fn.jquery
+                }
+            },
+            {
+                src: 'http://code.highcharts.com/highcharts.js',
+                check: function () {
+                    return !!(window.Highcharts);
+                }
+            }
+        ];
+
+        function loadScript(src, callback) {
+            var element = document.createElement('script');
+            element.onload = callback;
+            element.type = 'text/javascript';
+            element.src = src;
+            var firstScript = document.getElementsByTagName('script')[0];
+            firstScript.parentNode.insertBefore(element, firstScript);
+        }
+
+        function loadNextScript() {
+            // as long as scripts need to be loaded
+            if (scripts.length > 0) {
+                var script = scripts.shift();
+                // if the script is already available don't do anything further
+                if (script.check()) {
+                    loadNextScript();
+                }
+                // script does not exist so load it and insert it into the document
+                else {
+                    loadScript(script.src, loadNextScript);
+                }
+            }
+            // done loading scripts so prepare Widgets
+            else {
+                jQuery(prepareWidgets);
+            }
+        }
+
+        function prepareWidgets($) {
+            $('div[data-freifunk-widget][data-freifunk-names]').each(function () {
+                var widget = $(this);
+                var type = widget.data('freifunk-widget');
+                var names = widget.data('freifunk-names');
+                var id = widget.prop('id');
+                if (typeof type == 'string' && typeof  names == 'string') {
+                    names = names.replace(/^\s*|\s*$/m, '').split(/\s*,\s*/);
+
+                    // if the widget has no id generate one
+                    if (!id) {
+                        widget.prop({id: id = 'freifunk-widget-' + $.guid++})
+                    }
+
+                    // now load the widget
+                    loadScript(HOST
+                            + '/' + encodeURIComponent(type)
+                            + '/' + encodeURIComponent(id)
+                            + '?' + $.param({nodeName: names}));
+                }
+            });
+        }
+
+        // start
+        loadNextScript();
+    })();
+{#</script>#}

@@ -189,7 +189,7 @@ class Node
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        $this->email = strtolower($email);
 
         return $this;
     }
@@ -212,7 +212,7 @@ class Node
      */
     public function setMac($mac)
     {
-        $this->mac = $mac;
+        $this->mac = strtoupper($mac);
     
         return $this;
     }
@@ -281,7 +281,7 @@ class Node
      */
     public function setFastdKey($fastdKey)
     {
-        $this->fastdKey = $fastdKey;
+        $this->fastdKey = strtolower($fastdKey);
     
         return $this;
     }

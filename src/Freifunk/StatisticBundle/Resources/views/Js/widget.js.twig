@@ -61,10 +61,10 @@
                     }
 
                     // now load the widget
-                    loadScript(HOST
+                    loadScript(HOST + '/widget'
                             + '/' + encodeURIComponent(type)
                             + '/' + encodeURIComponent(id)
-                            + '?' + $.param({nodeName: names}));
+                            + '?' + $.param({node: names}));
                 }
             });
         }

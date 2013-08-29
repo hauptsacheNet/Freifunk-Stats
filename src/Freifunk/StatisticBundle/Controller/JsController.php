@@ -22,7 +22,7 @@ class JsController extends Controller
     public function widgetJsAction(Request $request)
     {
         $response = $this->render("FreifunkStatisticBundle:Js:widget.js.twig", array(
-            'baseurl' => $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath()
+            'baseurl' => $request->getBaseUrl()
         ));
         $response->headers->add(array(
             'Content-Type' => 'text/javascript; charset=UTF-8'

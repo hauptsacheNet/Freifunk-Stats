@@ -10,6 +10,7 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
 
 /**
  * Class DefaultController
+ *
  * @package Freifunk\StatisticBundle\Controller
  *
  * @Route("/widget")
@@ -32,15 +33,15 @@ class WidgetController extends Controller
     public function indexAction(Request $request, $id)
     {
         $manager = $this->getDoctrine()->getManager();
-        $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $stat_repository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
+        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
+        $statRepository = $manager->getRepository('FreifunkStatisticBundle:NodeStat');
 
-        $node = $node_repository->findOneBy(array(
+        $node = $nodeRepository->findOneBy(array(
             'nodeName' => $request->query->get('node')
         ));
 
         if ($node) {
-            $stats = $stat_repository->getLastStatOf($node);
+            $stats = $statRepository->getLastStatOf($node);
             $clients = $stats->getClientCount();
 
             return array(
@@ -68,12 +69,12 @@ class WidgetController extends Controller
     {
 
         $manager = $this->getDoctrine()->getManager();
-        $node_repository = $manager->getRepository('FreifunkStatisticBundle:Node');
-        $link_repository = $manager->getRepository('FreifunkStatisticBundle:Link');
+        $nodeRepository = $manager->getRepository('FreifunkStatisticBundle:Node');
+        $linkRepository = $manager->getRepository('FreifunkStatisticBundle:Link');
 
         $series = array();
 
-        $nodes = $node_repository->findBy(array(
+        $nodes = $nodeRepository->findBy(array(
             'nodeName' => $request->query->get('node')
         ));
 
@@ -83,7 +84,7 @@ class WidgetController extends Controller
                 $stats = array();
                 $now = new \DateTime();
                 foreach (range(1, 24) as $h) {
-                    $stats[] = $link_repository->countLinksForNodeBetween($node, $now->modify('-1 hour'), $now->modify('+1 hour'));
+                    $stats[] = $linkRepository->countLinksForNodeBetween($node, $now->modify('-1 hour'), $now->modify('+1 hour'));
                 }
 
                 if ($stats) {

@@ -44,13 +44,13 @@ class LinkRepository extends EntityRepository
                 FROM FreifunkStatisticBundle:Link l
                 WHERE
                     l.source = ?1
-                    AND l.openTime <= ?3
-                    AND (l.closeTime >= ?2
+                    AND l.openTime <= ?2
+                    AND (l.closeTime >= ?3
                       OR l.closeTime IS NULL)')
             ->setParameters(array(
                 1 => $node->getId(),
-                2 => $start,
-                3 => $end
+                2 => $end,
+                3 => $start
             ));
         return $query->getSingleScalarResult();
     }

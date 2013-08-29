@@ -82,8 +82,8 @@ class WidgetController extends Controller
 
             if ($node) {
                 $stats = array();
-                $now = new \DateTime("-24 hour");
-                $last = new \DateTime("-23 hour");
+                $now = new \DateTime("-23 hour");
+                $last = new \DateTime("-24 hour");
 
                 foreach (range(1, 24) as $h) {
                     $stats[] = $linkRepository->countLinksForNodeBetween($node, $last, $now);
@@ -99,9 +99,6 @@ class WidgetController extends Controller
                 }
             }
         }
-
-        var_dump($stats);
-        exit;
 
         $ob = new Highchart();
         $ob->chart->renderTo($id);

@@ -104,17 +104,34 @@ class Node
     /**
      * @var ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="NodeStat", mappedBy="node", fetch="EXTRA_LAZY", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="NodeStat", mappedBy="node", fetch="EXTRA_LAZY", cascade={"all"}, orphanRemoval=true)
      */
     private $stats;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="time", type="datetime")
      * @Assert\NotNull
      */
-    private $createdAt;
+    private $time;
+
+    /**
+     * Set mac
+     *
+     * @param string $mac
+     * @return Node
+     */
+    public function setMac($mac)
+    {
+        $this->mac = strtoupper($mac);
+
+        return $this;
+    }
+
+    /**
+     * Generated code from here...
+     */
 
     /**
      * Constructor
@@ -122,13 +139,12 @@ class Node
     public function __construct()
     {
         $this->stats = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->createdAt = new \DateTime();
     }
-    
+
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -144,14 +160,14 @@ class Node
     public function setNodeName($nodeName)
     {
         $this->nodeName = $nodeName;
-    
+
         return $this;
     }
 
     /**
      * Get nodeName
      *
-     * @return string 
+     * @return string
      */
     public function getNodeName()
     {
@@ -167,14 +183,14 @@ class Node
     public function setRealName($realName)
     {
         $this->realName = $realName;
-    
+
         return $this;
     }
 
     /**
      * Get realName
      *
-     * @return string 
+     * @return string
      */
     public function getRealName()
     {
@@ -205,22 +221,9 @@ class Node
     }
 
     /**
-     * Set mac
-     *
-     * @param string $mac
-     * @return Node
-     */
-    public function setMac($mac)
-    {
-        $this->mac = $mac;
-    
-        return $this;
-    }
-
-    /**
      * Get mac
      *
-     * @return string 
+     * @return string
      */
     public function getMac()
     {
@@ -236,14 +239,14 @@ class Node
     public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
-    
+
         return $this;
     }
 
     /**
      * Get latitude
      *
-     * @return float 
+     * @return float
      */
     public function getLatitude()
     {
@@ -259,14 +262,14 @@ class Node
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
-    
+
         return $this;
     }
 
     /**
      * Get longitude
      *
-     * @return float 
+     * @return float
      */
     public function getLongitude()
     {
@@ -282,41 +285,18 @@ class Node
     public function setFastdKey($fastdKey)
     {
         $this->fastdKey = $fastdKey;
-    
+
         return $this;
     }
 
     /**
      * Get fastdKey
      *
-     * @return string 
+     * @return string
      */
     public function getFastdKey()
     {
         return $this->fastdKey;
-    }
-
-    /**
-     * Set createdAt
-     *
-     * @param \DateTime $createdAt
-     * @return Node
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-    
-        return $this;
-    }
-
-    /**
-     * Get createdAt
-     *
-     * @return \DateTime 
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
     }
 
     /**
@@ -328,7 +308,7 @@ class Node
     public function addStat(\Freifunk\StatisticBundle\Entity\NodeStat $stats)
     {
         $this->stats[] = $stats;
-    
+
         return $this;
     }
 
@@ -345,10 +325,99 @@ class Node
     /**
      * Get stats
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getStats()
     {
         return $this->stats;
+    }
+
+    /**
+     * Add targetLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $targetLinks
+     * @return Node
+     */
+    public function addTargetLink(\Freifunk\StatisticBundle\Entity\Link $targetLinks)
+    {
+        $this->targetLinks[] = $targetLinks;
+
+        return $this;
+    }
+
+    /**
+     * Remove targetLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $targetLinks
+     */
+    public function removeTargetLink(\Freifunk\StatisticBundle\Entity\Link $targetLinks)
+    {
+        $this->targetLinks->removeElement($targetLinks);
+    }
+
+    /**
+     * Get targetLinks
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTargetLinks()
+    {
+        return $this->targetLinks;
+    }
+
+    /**
+     * Add sourceLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $sourceLinks
+     * @return Node
+     */
+    public function addSourceLink(\Freifunk\StatisticBundle\Entity\Link $sourceLinks)
+    {
+        $this->sourceLinks[] = $sourceLinks;
+
+        return $this;
+    }
+
+    /**
+     * Remove sourceLinks
+     *
+     * @param \Freifunk\StatisticBundle\Entity\Link $sourceLinks
+     */
+    public function removeSourceLink(\Freifunk\StatisticBundle\Entity\Link $sourceLinks)
+    {
+        $this->sourceLinks->removeElement($sourceLinks);
+    }
+
+    /**
+     * Get sourceLinks
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSourceLinks()
+    {
+        return $this->sourceLinks;
+    }
+
+    /**
+     * Set time
+     *
+     * @param \DateTime $time
+     * @return Node
+     */
+    public function setTime($time)
+    {
+        $this->time = $time;
+
+        return $this;
+    }
+
+    /**
+     * Get time
+     *
+     * @return \DateTime
+     */
+    public function getTime()
+    {
+        return $this->time;
     }
 }

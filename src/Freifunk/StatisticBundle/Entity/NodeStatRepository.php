@@ -22,7 +22,7 @@ class NodeStatRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('s');
         $qb->andWhere($qb->expr()->eq('s.node', $qb->expr()->literal($node->getId())));
-        $qb->orderBy('s.createdAt', 'DESC');
+        $qb->orderBy('s.time', 'DESC');
         $qb->setMaxResults(1);
         return $qb->getQuery()->getOneOrNullResult();
     }

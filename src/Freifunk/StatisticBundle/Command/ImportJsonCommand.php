@@ -19,6 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ImportJsonCommand extends ContainerAwareCommand
 {
+    /** @var JsonImporter */
+    private $jsonParser;
 
     /**
      * {@inheritdoc}
@@ -28,7 +30,8 @@ class ImportJsonCommand extends ContainerAwareCommand
         $this
             ->setName('freifunk:import-json')
             ->setDescription('puts the data of the specified file into the database')
-            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'The json file to be read');
+            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'The json file to be read')
+            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'If the file should be removed afterwards');
     }
 
     /**
@@ -36,11 +39,29 @@ class ImportJsonCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
         $file = $input->getOption("file");
-        /** @var JsonImporter $jsonParser */
-        $jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
-        $log = $jsonParser->fromFile(new FileResource($file));
-        $output->write($log->getMessage());
-        $output->writeln($log->__toString());
+        $this->useFile($file, $output, $input->getOption('remove'));
+    }
+
+    private function useFile($file, OutputInterface $output, $remove)
+    {
+        if (is_dir($file)) {
+            $entries = scandir($file);
+            sort($entries);
+            foreach ($entries as $entry) {
+                if (!preg_match('/^\.{1,2}$/', $entry)) {
+                    $this->useFile($file . $entry, $output, $remove);
+                }
+            }
+        } else if (is_file($file)) {
+            $output->writeln('now parsing ' . $file);
+            $log = $this->jsonParser->fromResource($file);
+            $output->write($log->getMessage());
+            $output->writeln($log->__toString());
+            if ($remove) {
+                unlink($file);
+            }
+        }
     }
 }

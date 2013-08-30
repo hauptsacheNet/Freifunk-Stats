@@ -60,6 +60,12 @@
                         widget.prop({id: id = 'freifunk-widget-' + $.guid++})
                     }
 
+                    // now just add some properties to the element to make it work on every site
+                    widget.css({
+                        font: 'normal normal normal 12pt/1.2em Verdana, Arial, Helvetica, sans-serif',
+                        display: 'block'
+                    });
+
                     // now load the widget
                     loadScript(HOST + '/widget'
                             + '/' + encodeURIComponent(type)

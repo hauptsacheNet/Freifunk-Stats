@@ -1,6 +1,6 @@
 {#}
 <script>{##}
-
+(function(){
 // insert html onto page
 $("#{{ block('append_id') }}").append($.parseHTML("{{ block('widget_html')|replace({'"': '\\"', '\n': '\\n'})|raw }}"));
 
@@ -20,3 +20,5 @@ for (var i = 0; i < cssFiles.length; ++i) {
 
 {% block additional_javascript %}
 {% endblock %}
+
+})();

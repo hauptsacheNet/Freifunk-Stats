@@ -32,13 +32,13 @@ class NodeRepository extends EntityRepository
      *
      * @param mixed $node
      *
-     * @return array
+     * @return Node[]
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function findByNodeName($node)
     {
-        if (is_null($node)) {
+        if (is_null($node) || empty($node)) {
             throw new NotFoundHttpException('Keine Knoten angegeben.');
         }
 
@@ -47,7 +47,13 @@ class NodeRepository extends EntityRepository
         $qb = $this->createQueryBuilder('n');
         $qb->andWhere($qb->expr()->in('n.nodeName', $nodes));
 
-        return $qb->getQuery()->getResult();
+        /** @var Node $node */
+        $nodes = $qb->getQuery()->getResult();
+        $result = array();
+        foreach ($nodes as $node) {
+            $result[$node->getNodeName()] = $node;
+        }
+        return $result;
     }
 
     /**

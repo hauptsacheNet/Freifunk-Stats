@@ -71,7 +71,7 @@ class ImportJsonCommand extends ContainerAwareCommand
                     $this->useFile($file . $entry, $output, $remove);
                 }
             }
-        } else if (is_file($file)) {
+        } else if (preg_match('/json$/i', $file) && is_file($file)) {
             $output->writeln('now parsing ' . $file);
             $log = $this->jsonParser->fromResource($file);
             $output->write($log->getMessage());

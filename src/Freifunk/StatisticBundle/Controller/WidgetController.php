@@ -2,9 +2,13 @@
 
 namespace Freifunk\StatisticBundle\Controller;
 
+use Freifunk\StatisticBundle\Entity\LinkRepository;
+use Freifunk\StatisticBundle\Entity\NodeRepository;
+use Freifunk\StatisticBundle\Entity\NodeStatRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Ob\HighchartsBundle\Highcharts\Highchart;
 
@@ -17,6 +21,27 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
  */
 class WidgetController extends Controller
 {
+    /** @var NodeRepository */
+    private $nodeRepository;
+    /** @var NodeStatRepository */
+    private $statRepository;
+    /** @var LinkRepository */
+    private $linkRepository;
+
+    public function setContainer(ContainerInterface $container = null)
+    {
+        parent::setContainer($container);
+        $manager = $this->getDoctrine()->getManager();
+        $this->nodeRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Node'
+        );
+        $this->statRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:NodeStat'
+        );
+        $this->linkRepository = $manager->getRepository(
+            'FreifunkStatisticBundle:Link'
+        );
+    }
 
     private function createHighChart($xTitle, $yTitle, $accent = '#E0266B', $text = '#000')
     {
@@ -63,20 +88,13 @@ class WidgetController extends Controller
      */
     public function indexAction(Request $request, $id)
     {
-        $manager = $this->getDoctrine()->getManager();
-        $nodeRepository = $manager->getRepository(
-            'FreifunkStatisticBundle:Node'
-        );
-        $statRepository = $manager->getRepository(
-            'FreifunkStatisticBundle:NodeStat'
-        );
 
-        $node = $nodeRepository->findByNodeName(
+        $node = $this->nodeRepository->findByNodeName(
             $request->query->get('node')
         );
 
         if ($node) {
-            $stats = $statRepository->getLastStatOf($node);
+            $stats = $this->statRepository->getLastStatOf($node);
             $clients = $stats->getClientCount();
 
             return array(
@@ -103,52 +121,45 @@ class WidgetController extends Controller
      */
     public function clientsPerHourAction(Request $request, $id)
     {
-
-        $manager = $this->getDoctrine()->getManager();
-        $nodeRepository = $manager->getRepository(
-            'FreifunkStatisticBundle:Node'
-        );
-        $linkRepository = $manager->getRepository(
-            'FreifunkStatisticBundle:Link'
-        );
+        $nodeNames = array();
+        $nodeQuery = $request->query->get('node');
+        foreach ($nodeQuery as $row) {
+            foreach ($row['nodes'] as $node) {
+                $nodeNames[] = $node;
+            }
+        }
 
         $series = array();
+        $nodes = $this->nodeRepository->findByNodeName($nodeNames);
 
-        $nodes = $nodeRepository->findByNodeName(
-            $request->query->get('node')
-        );
-
-        foreach ($nodes as $node) {
-
-            if ($node) {
-                $stats = array();
-                $now = new \DateTime("-22 hour");
-                $now->setTime($now->format('H'), 0, 0);
-                $last = new \DateTime("-23 hour");
-                $last->setTime($last->format('H'), 0, 0);
-
-                foreach (range(1, 24) as $h) {
-                    $stats[] = array(
-                        $now->getTimestamp() * 1000,
-                        $linkRepository->countLinksForNodeBetween($node, $last, $now)
-                    );
-                    $now->modify("+1 hour");
-                    $last->modify("+1 hour");
-                }
-
-                if ($stats) {
-                    $series[] = array(
-                        'name' => $node->getNodeName(),
-                        'data' => $stats
-                    );
+        foreach ($nodeQuery as $row) {
+            $nodeBundle = array();
+            foreach ($row['nodes'] as $nodeName) {
+                if (array_key_exists($nodeName, $nodes)) {
+                    $nodeBundle[] = $nodes[$nodeName];
+                } else {
+                    throw $this->createNotFoundException('node ' . $nodeName . ' not found');
                 }
             }
+
+            // create timeline
+            $timeline = $this->linkRepository->computeLinkTimeline($nodeBundle);
+            $nodeStats = array();
+            foreach ($timeline as $date => $count) {
+                $nodeStats[] = array(strtotime($date) * 1000, $count);
+            }
+
+            $series[] = array(
+                'name' => $row['name'] ? $row['name'] : $nodeBundle[0]->getNodeName(),
+                'data' => $nodeStats
+            );
         }
 
         $ob = $this->createHighChart(null, 'Anzahl Clients');
         $ob->chart->renderTo($id . '_chart');
         $ob->chart->type('line');
         $ob->chart->spacingRight(130);
+        $ob->chart->zoomType('x');
         $ob->xAxis->type('datetime');
         $ob->legend->align('right');
         $ob->legend->verticalAlign('top');
@@ -158,9 +169,6 @@ class WidgetController extends Controller
         $ob->legend->floating(true);
         $ob->legend->itemWidth(120);
         $ob->legend->borderWidth(0);
-        $ob->labels->style(array(
-            'font-weight' => 'bold'
-        ));
 
         $ob->series($series);
 

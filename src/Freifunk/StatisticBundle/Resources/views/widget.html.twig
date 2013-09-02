@@ -1,6 +1,7 @@
 {#}
 <script>{##}
 (function(){
+var $ = jQuery;
 // insert html onto page
 $("#{{ block('append_id') }}").append($.parseHTML("{{ block('widget_html')|replace({'"': '\\"', '\n': '\\n'})|raw }}"));
 

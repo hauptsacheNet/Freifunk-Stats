@@ -8,15 +8,20 @@
                 check: function () {
                     return !!(window.jQuery && jQuery.fn && jQuery.fn.jquery);
                     // TODO check version in jQuery.fn.jquery
+                },
+                loaded: function () {
+                    jQuery.noConflict();
                 }
             },
             {
                 src: 'http://code.highcharts.com/highcharts.js',
                 check: function () {
                     return !!(window.Highcharts);
-                }
+                },
+                loaded: function () {}
             }
         ];
+        var nextScript = 0;
 
         function loadScript(src, callback) {
             var element = document.createElement('script');
@@ -28,16 +33,18 @@
         }
 
         function loadNextScript() {
-            // as long as scripts need to be loaded
-            if (scripts.length > 0) {
-                var script = scripts.shift();
+            var script = scripts[nextScript++];
+            if (script != null) {
                 // if the script is already available don't do anything further
                 if (script.check()) {
                     loadNextScript();
                 }
                 // script does not exist so load it and insert it into the document
                 else {
-                    loadScript(script.src, loadNextScript);
+                    loadScript(script.src, function () {
+                        script.loaded();
+                        loadNextScript();
+                    });
                 }
             }
             // done loading scripts so prepare Widgets
@@ -46,14 +53,31 @@
             }
         }
 
-        function prepareWidgets($) {
+        function prepareWidgets() {
+            var $ = jQuery;
             $('div[data-freifunk-widget][data-freifunk-names]').each(function () {
                 var widget = $(this);
                 var type = widget.data('freifunk-widget');
                 var names = widget.data('freifunk-names');
                 var id = widget.prop('id');
                 if (typeof type == 'string' && typeof  names == 'string') {
-                    names = names.replace(/^\s*|\s*$/m, '').split(/\s*,\s*/);
+
+                    // split the node names into there potions
+                    var nodes = [];
+                    var parts = names.replace(/^\s*|\s*$/m, '').split(/\s*,\s*/);
+                    console.log('parts', parts);
+                    for (var i = 0; i < parts.length; ++i) {
+                        var singleNodes = parts[i].split(/\s*\+\s*/);
+                        if (singleNodes.length > 0) {
+                            var lastIndex = singleNodes.length - 1;
+                            var lastPart = singleNodes[lastIndex].split(/\s*=\s*/);
+                            singleNodes[lastIndex] = lastPart[0];
+                            nodes.push({
+                                nodes: singleNodes,
+                                name: lastPart[1] || null
+                            });
+                        }
+                    }
 
                     // if the widget has no id generate one
                     if (!id) {
@@ -70,7 +94,7 @@
                     loadScript(HOST + '/widget'
                             + '/' + encodeURIComponent(type)
                             + '/' + encodeURIComponent(id)
-                            + '?' + $.param({node: names}));
+                            + '?' + $.param({node: nodes}));
                 }
             });
         }

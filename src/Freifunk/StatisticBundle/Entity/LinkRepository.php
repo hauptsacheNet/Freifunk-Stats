@@ -5,6 +5,7 @@ namespace Freifunk\StatisticBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Freifunk\StatisticBundle\Entity\Node;
 use Freifunk\StatisticBundle\Entity\Link;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * LinkRepository
@@ -33,7 +34,7 @@ class LinkRepository extends EntityRepository
     /**
      * Returns the number of links for a node between 2 dates
      *
-     * @param Node      $node
+     * @param Node $node
      * @param \DateTime $start
      * @param \DateTime $end
      *
@@ -56,13 +57,13 @@ class LinkRepository extends EntityRepository
                 4 => Link::CLIENT
             ));
 
-        return (int) $query->getSingleScalarResult();
+        return (int)$query->getSingleScalarResult();
     }
 
     /**
      * Returns the number of unique     links for a node between 2 dates
      *
-     * @param Node      $node
+     * @param Node $node
      * @param \DateTime $start
      * @param \DateTime $end
      *
@@ -85,6 +86,66 @@ class LinkRepository extends EntityRepository
                 4 => Link::CLIENT
             ));
 
-        return (int) $query->getSingleScalarResult();
+        return (int)$query->getSingleScalarResult();
+    }
+
+    /**
+     * @param Node|Node[] $nodes
+     * @param string $steps
+     * @param string $format
+     */
+    public function computeLinkTimeline($nodes, $steps = '1 hour', $format = 'Y-m-d H:00:00')
+    {
+        if (!is_array($nodes) && !($nodes instanceof \Traversable)) {
+            $nodes = array($nodes);
+        }
+        if (empty($nodes)) {
+            throw new NotFoundHttpException("No node selected");
+        }
+        $nodeIdList = array();
+        foreach ($nodes as $node) {
+            $nodeIdList = $node->getId();
+        }
+
+        // first we need all dates
+        $qb = $this->createQueryBuilder('l');
+        $qb->andWhere($qb->expr()->eq('l.type', $qb->expr()->literal(Link::CLIENT)));
+        $qb->andWhere($qb->expr()->in('l.source', $nodeIdList));
+        $qb->join('l.target', 'lt');
+        $qb->select('l.openTime, l.closeTime, lt.id as targetId');
+        $qb->orderBy('l.openTime', 'ASC');
+        $links = $qb->getQuery()->getArrayResult();
+        /** @var \DateTime $oldestDate */
+        $oldestDate = !empty($links) ? $links[0]['openTime'] : new \DateTime();
+        $now = new \DateTime(date($format));
+
+        // now create a massive list of times since then in hours
+        $times = array();
+        $stats = array();
+        while ($now->getTimestamp() >= $oldestDate->getTimestamp()) {
+            $times[] = $now->format('Y-m-d H:i:s');
+            $stats[$now->format($format)] = array();
+            $now = clone $now;
+            $now->modify('-' . $steps);
+        }
+
+        // iterate the times and create the stats
+        $now = new \DateTime();
+        foreach ($links as $link) {
+            $linkTime = new \DateTime($link['openTime']->format($format));
+            $linkEnd = $link['closeTime'];
+            while (($linkEnd == null && $linkTime->getTimestamp() <= $now->getTimestamp())
+                || ($linkEnd != null && $linkTime->getTimestamp() <= $linkEnd->getTimestamp())) {
+                $stats[$linkTime->format($format)][$link['targetId']] = true;
+                $linkTime->modify($steps);
+            }
+        }
+
+        // now clean our steps array
+        foreach ($stats as &$stat) {
+            $stat = count($stat);
+        }
+        ksort($stats);
+        return $stats;
     }
 }

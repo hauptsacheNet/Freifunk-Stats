@@ -76,4 +76,19 @@ class UpdateLogRepository extends EntityRepository
 
         return $qb->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * Returns the last $limit logs
+     *
+     * @param int $limit number of logs
+     *
+     * @return array
+     */
+    public function findLastLogs($limit = 10)
+    {
+        return $this->getEntityManager()
+            ->createQuery('SELECT l FROM FreifunkStatisticBundle:UpdateLog l ORDER BY l.id DESC')
+            ->setMaxResults($limit)
+            ->getResult();
+    }
 }

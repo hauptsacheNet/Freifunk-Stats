@@ -31,6 +31,7 @@ class DefaultController extends Controller
             'FreifunkStatisticBundle:UpdateLog'
         );
 
+        $lastLogs = $uLogRepository->findLastLogs(10);
         //$size_query = $this->get('database_connection')
         // ->query('SELECT pg_size_pretty(pg_database_size(\'freifunk\'));')
         // ->fetchAll();
@@ -39,7 +40,7 @@ class DefaultController extends Controller
 
         return array(
             'total_nodes' => $nodeRepository->countAllNodes(),
-            'logs' => $uLogRepository->findAll(),
+            'logs' => $lastLogs,
             'table_size' => 0, //$size_query[0]['pg_size_pretty'],
             'logs_per_hour' => $uLogRepository->findLogsAfter(
                 $now->modify('-1 hour')

@@ -17,7 +17,6 @@ use Ob\HighchartsBundle\Highcharts\Highchart;
  *
  * @package Freifunk\StatisticBundle\Controller
  *
- * @Route("/widget")
  */
 class WidgetController extends Controller
 {
@@ -83,7 +82,7 @@ class WidgetController extends Controller
      *
      * @return array
      *
-     * @Route("/test/{id}")
+     * @Route("/widget/test/{id}")
      * @Template()
      */
     public function indexAction(Request $request, $id)
@@ -108,6 +107,32 @@ class WidgetController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @param string  $nodeName
+     *
+     * @return array
+     *
+     * @Route("/{nodeName}")
+     * @Template()
+     */
+    public function nodeHotlinkAction(Request $request, $nodeName)
+    {
+
+        $node = $this->nodeRepository->findOneBy(array(
+            'nodeName' => $nodeName
+        ));
+
+        if ($node) {
+
+            return array(
+                'node' => $node
+            );
+        }
+
+        return $this->createNotFoundException('Knoten nicht gefunden');
+    }
+
+    /**
      * Returns a nice graph that displays all Clients for
      * the nodes over the selected period of time.
      *
@@ -116,7 +141,7 @@ class WidgetController extends Controller
      *
      * @return array
      *
-     * @Route("/clients/{id}")
+     * @Route("/widget/clients/{id}")
      * @Template()
      */
     public function clientsPerHourAction(Request $request, $id)

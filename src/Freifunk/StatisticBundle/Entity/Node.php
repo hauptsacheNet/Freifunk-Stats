@@ -28,7 +28,7 @@ class Node
      *
      * @ORM\Column(name="nodeName", type="string", length=32, nullable=true)
      * @Assert\Length(min=1,max=32)
-     * @Assert\Regex("/^[-a-zA-Z0-9_]*$/")
+     * //@Assert\Regex("/^[-a-zA-Z0-9_]*$/")
      */
     private $nodeName;
 
@@ -55,10 +55,9 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="mac", type="string", length=17, unique=true)
+     * @ORM\Column(name="mac", type="string", length=40, unique=true)
      * @Assert\NotNull
-     * @Assert\Regex("/^([a-fA-F0-9]{12}|([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2})$/")
-     * @Assert\Length(max=17)
+     * @Assert\Length(max=40)
      */
     private $mac;
 
@@ -125,7 +124,7 @@ class Node
      */
     public function setMac($mac)
     {
-        $this->mac = strtoupper($mac);
+        $this->mac = sha1(strtoupper($mac));
 
         return $this;
     }

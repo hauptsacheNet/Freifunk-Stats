@@ -116,7 +116,7 @@ class Import
             $this->handleMetaData();
 
             $this->parseNodes();
-            $this->cleanupDatabaseNodes();
+            //$this->cleanupDatabaseNodes();
             $this->importNodes();
             $this->em->flush();
 
@@ -340,8 +340,9 @@ class Import
         $link->setOpenTime($this->log->getFileTime());
 
         //list($idSource, $idTarget) = explode('-', strtoupper($data['id']));
-        $target = strtoupper(@$this->data['nodes'][$data['target']]['id']);
-        $source = strtoupper(@$this->data['nodes'][$data['source']]['id']);
+        $target = sha1(strtoupper(@$this->data['nodes'][$data['target']]['id']));
+        $source = sha1(strtoupper(@$this->data['nodes'][$data['source']]['id']));
+
         if (array_key_exists($target, $this->nodesInFile) && array_key_exists($source, $this->nodesInFile)) {
             $link->setTarget($this->nodesInFile[$target]);
             $link->setSource($this->nodesInFile[$source]);

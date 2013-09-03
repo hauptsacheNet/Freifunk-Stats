@@ -13,26 +13,36 @@ use Doctrine\ORM\EntityRepository;
 class UpdateLogRepository extends EntityRepository
 {
     /**
-     * @param $timestamp
+     * Finds all logs after $timestamp
+     *
+     * @param \DateTime $timestamp
+     *
      * @return mixed
      */
-    public function findLogsAfter($timestamp)
+    public function findLogsAfter(\DateTime $timestamp)
     {
         $manager = $this->getEntityManager();
-        $query = $manager->createQuery('SELECT COUNT(l.id) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
+        $query = $manager->createQuery(
+            'SELECT COUNT(l.id) FROM FreifunkStatisticBundle:UpdateLog l WHERE l.fileTime > ?1'
+        );
         $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
 
         return $count;
     }
 
     /**
-     * @param $timestamp
+     * Finds the `.json` filesize of multiple logs
+     *
+     * @param \DateTime $timestamp
+     *
      * @return mixed
      */
-    public function findLogSizeAfter($timestamp)
+    public function findLogSizeAfter(\DateTime $timestamp)
     {
         $manager = $this->getEntityManager();
-        $query = $manager->createQuery('SELECT SUM(l.fileSize) FROM Freifunk\\StatisticBundle\\Entity\\UpdateLog l WHERE l.fileTime > ?1');
+        $query = $manager->createQuery(
+            'SELECT SUM(l.fileSize) FROM FreifunkStatisticBundle:UpdateLog l WHERE l.fileTime > ?1'
+        );
         $count = $query->setParameter(1, $timestamp)->getSingleScalarResult();
 
         return $count;
@@ -48,6 +58,7 @@ class UpdateLogRepository extends EntityRepository
         $qb = $this->createQueryBuilder('l');
         $qb->orderBy('l.fileTime', 'DESC');
         $qb->setMaxResults(1);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 
@@ -62,6 +73,22 @@ class UpdateLogRepository extends EntityRepository
         $qb->andWhere($qb->expr()->isNotNull('l.fileTime'));
         $qb->orderBy('l.fileTime', 'DESC');
         $qb->setMaxResults(1);
+
         return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * Returns the last $limit logs
+     *
+     * @param int $limit number of logs
+     *
+     * @return array
+     */
+    public function findLastLogs($limit = 10)
+    {
+        return $this->getEntityManager()
+            ->createQuery('SELECT l FROM FreifunkStatisticBundle:UpdateLog l ORDER BY l.id DESC')
+            ->setMaxResults($limit)
+            ->getResult();
     }
 }

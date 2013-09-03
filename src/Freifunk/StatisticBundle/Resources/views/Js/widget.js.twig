@@ -1,0 +1,105 @@
+{#}
+<script>{##}
+    (function () {
+        var HOST = '{{ app.request.SchemeAndHttpHost|raw }}{{ app.request.baseUrl|raw }}';
+        var scripts = [
+            {
+                src: 'http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js',
+                check: function () {
+                    return !!(window.jQuery && jQuery.fn && jQuery.fn.jquery);
+                    // TODO check version in jQuery.fn.jquery
+                },
+                loaded: function () {
+                    jQuery.noConflict();
+                }
+            },
+            {
+                src: 'http://code.highcharts.com/highcharts.js',
+                check: function () {
+                    return !!(window.Highcharts);
+                },
+                loaded: function () {}
+            }
+        ];
+        var nextScript = 0;
+
+        function loadScript(src, callback) {
+            var element = document.createElement('script');
+            element.onload = callback;
+            element.type = 'text/javascript';
+            element.src = src;
+            var firstScript = document.getElementsByTagName('script')[0];
+            firstScript.parentNode.insertBefore(element, firstScript);
+        }
+
+        function loadNextScript() {
+            var script = scripts[nextScript++];
+            if (script != null) {
+                // if the script is already available don't do anything further
+                if (script.check()) {
+                    loadNextScript();
+                }
+                // script does not exist so load it and insert it into the document
+                else {
+                    loadScript(script.src, function () {
+                        script.loaded();
+                        loadNextScript();
+                    });
+                }
+            }
+            // done loading scripts so prepare Widgets
+            else {
+                jQuery(prepareWidgets);
+            }
+        }
+
+        function prepareWidgets() {
+            var $ = jQuery;
+            $('div[data-freifunk-widget][data-freifunk-names]').each(function () {
+                var widget = $(this);
+                var type = widget.data('freifunk-widget');
+                var names = widget.data('freifunk-names');
+                var id = widget.prop('id');
+                if (typeof type == 'string' && typeof  names == 'string') {
+
+                    // split the node names into there potions
+                    var nodes = [];
+                    var parts = names.replace(/^\s*|\s*$/m, '').split(/\s*,\s*/);
+                    console.log('parts', parts);
+                    for (var i = 0; i < parts.length; ++i) {
+                        var singleNodes = parts[i].split(/\s*\+\s*/);
+                        if (singleNodes.length > 0) {
+                            var lastIndex = singleNodes.length - 1;
+                            var lastPart = singleNodes[lastIndex].split(/\s*=\s*/);
+                            singleNodes[lastIndex] = lastPart[0];
+                            nodes.push({
+                                nodes: singleNodes,
+                                name: lastPart[1] || null
+                            });
+                        }
+                    }
+
+                    // if the widget has no id generate one
+                    if (!id) {
+                        widget.prop({id: id = 'freifunk-widget-' + $.guid++})
+                    }
+
+                    // now just add some properties to the element to make it work on every site
+                    widget.css({
+                        font: 'normal normal normal 12pt/1.2em Verdana, Arial, Helvetica, sans-serif',
+                        display: 'block'
+                    });
+
+                    // now load the widget
+                    loadScript(HOST + '/widget'
+                            + '/' + encodeURIComponent(type)
+                            + '/' + encodeURIComponent(id)
+                            + '?' + $.param({node: nodes}));
+                }
+            });
+        }
+
+        // start
+        loadNextScript();
+    })();
+{#</script>#}

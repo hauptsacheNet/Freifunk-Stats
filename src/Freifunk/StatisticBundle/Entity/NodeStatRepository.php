@@ -16,6 +16,7 @@ class NodeStatRepository extends EntityRepository
      * Returns the last node status of the specified node
      *
      * @param Node $node
+     *
      * @return NodeStat
      */
     public function getLastStatOf(Node $node)
@@ -24,6 +25,7 @@ class NodeStatRepository extends EntityRepository
         $qb->andWhere($qb->expr()->eq('s.node', $qb->expr()->literal($node->getId())));
         $qb->orderBy('s.time', 'DESC');
         $qb->setMaxResults(1);
+
         return $qb->getQuery()->getOneOrNullResult();
     }
 }

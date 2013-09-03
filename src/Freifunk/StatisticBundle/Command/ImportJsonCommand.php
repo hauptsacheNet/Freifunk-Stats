@@ -17,6 +17,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class ImportJsonCommand
+ *
+ * @package Freifunk\StatisticBundle\Command
+ */
 class ImportJsonCommand extends ContainerAwareCommand
 {
     /** @var JsonImporter */
@@ -29,9 +34,19 @@ class ImportJsonCommand extends ContainerAwareCommand
     {
         $this
             ->setName('freifunk:import-json')
-            ->setDescription('puts the data of the specified file into the database')
-            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'The json file to be read')
-            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'If the file should be removed afterwards');
+            ->setDescription('Reads a .json file into the database')
+            ->addOption(
+                'file',
+                'f',
+                InputOption::VALUE_REQUIRED,
+                'The json file to be read'
+            )
+            ->addOption(
+                'remove',
+                'r',
+                InputOption::VALUE_NONE,
+                'If the file should be removed afterwards'
+            );
     }
 
     /**
@@ -39,7 +54,9 @@ class ImportJsonCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->jsonParser = $this->getContainer()->get('freifunk_statistic.json_importer');
+        $this->jsonParser = $this->getContainer()
+            ->get('freifunk_statistic.json_importer');
+
         $file = $input->getOption("file");
         $this->useFile($file, $output, $input->getOption('remove'));
     }
@@ -54,7 +71,7 @@ class ImportJsonCommand extends ContainerAwareCommand
                     $this->useFile($file . $entry, $output, $remove);
                 }
             }
-        } else if (is_file($file)) {
+        } else if (preg_match('/json$/i', $file) && is_file($file)) {
             $output->writeln('now parsing ' . $file);
             $log = $this->jsonParser->fromResource($file);
             $output->write($log->getMessage());

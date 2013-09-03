@@ -8,13 +8,21 @@
  */
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Freifunk\StatisticBundle\Service\JsonImporter;
 
+/**
+ * Class JsonImportTest
+ */
 class JsonImportTest extends WebTestCase
 {
+    /** @var  Container */
     protected static $container;
     /** @var \Doctrine\ORM\EntityManager */
     protected static $em;
 
+    /**
+     * {@inheritDocs}
+     */
     public function setUp()
     {
         self::$kernel = static::createKernel();
@@ -23,6 +31,11 @@ class JsonImportTest extends WebTestCase
         static::$em = static::$container->get('doctrine.orm.entity_manager');
     }
 
+    /**
+     * Provides invalid files.
+     *
+     * @return array
+     */
     public static function invalidFileNames()
     {
         return array(
@@ -34,6 +47,11 @@ class JsonImportTest extends WebTestCase
         );
     }
 
+    /**
+     * Provides invalid data.
+     *
+     * @return array
+     */
     public static function invalidData()
     {
         return array(
@@ -46,13 +64,23 @@ class JsonImportTest extends WebTestCase
     }
 
     /**
+     * Returns the Importer service.
+     *
      * @return \Freifunk\StatisticBundle\Service\JsonImporter
      */
-    protected function getImporter () {
-        return new \Freifunk\StatisticBundle\Service\JsonImporter(static::$em, static::$container->get("validator"));
+    protected function getImporter ()
+    {
+        return new JsonImporter(
+            static::$em,
+            static::$container->get("validator")
+        );
     }
 
     /**
+     * test invalid files:
+     *
+     * @param string $file
+     *
      * @dataProvider invalidFileNames
      */
     public function testFromFileError($file)
@@ -67,6 +95,10 @@ class JsonImportTest extends WebTestCase
     }
 
     /**
+     * Tests invalid json
+     *
+     * @param string $json
+     *
      * @dataProvider invalidData
      */
     public function testInvalidJSON($json)

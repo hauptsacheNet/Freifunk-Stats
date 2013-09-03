@@ -12,10 +12,24 @@ namespace Freifunk\StatisticBundle\Importer;
 
 use Exception;
 
+/**
+ * Class ImportException
+ *
+ * @package Freifunk\StatisticBundle\Importer
+ */
 class ImportException extends \Exception
 {
+    /** @var string  */
     private $key;
 
+    /**
+     * Constructor
+     *
+     * @param string $key
+     * @param null   $message
+     *
+     * @return ImportException
+     */
     public function __construct($key, $message = null)
     {
         if ($message == null) {
@@ -25,6 +39,9 @@ class ImportException extends \Exception
         $this->key = $key;
     }
 
+    /**
+     * @return string
+     */
     public function getWrongKey()
     {
         return $this->key;

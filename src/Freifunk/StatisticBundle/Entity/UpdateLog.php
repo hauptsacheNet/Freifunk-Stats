@@ -124,52 +124,85 @@ class UpdateLog
      */
     private $message = "";
 
-
+    /**
+     * Constructor
+     *
+     * @return UpdateLog
+     */
     public function __construct()
     {
         $this->startTime = new \DateTime();
     }
 
+    /**
+     * @param string $message
+     */
     public function addMessage($message)
     {
         $this->message .= $message . "\n";
     }
 
+    /**
+     * Increases `nodesPreserved` counter.
+     */
     public function nodePreserved()
     {
         $this->nodesPreserved++;
     }
 
+    /**
+     * Increases `nodesAdded` counter.
+     */
     public function nodeAdded()
     {
         $this->nodesAdded++;
     }
 
+    /**
+     * Increases `nodeRemoved` counter.
+     */
     public function nodeRemoved()
     {
         $this->nodesRemoved++;
     }
 
+    /**
+     * Increases `LinksPreserved` counter.
+     */
     public function linkPreserved()
     {
         $this->linksPreserved++;
     }
 
+    /**
+     * Increases `LinksAdded` counter.
+     */
     public function linkAdded()
     {
         $this->linksAdded++;
     }
 
+    /**
+     * Increases `LinksRemoved` counter.
+     */
     public function linkRemoved()
     {
         $this->linksRemoved++;
     }
 
+    /**
+     * Increases `statusUpdates` counter.
+     */
     public function statusUpdated()
     {
         $this->statusUpdates++;
     }
 
+    /**
+     * __toString method
+     *
+     * @return string
+     */
     public function __toString()
     {
         return 'nodes(new: ' . $this->getNodesAdded() . ', preserved: ' . $this->getNodesPreserved() . ', removed: ' . $this->getNodesRemoved() . ')'
@@ -177,6 +210,9 @@ class UpdateLog
         . "\n" . 'also there were ' . $this->getStatusUpdates() . ' status updates';
     }
 
+    /**
+     * Updates the end time.
+     */
     public function finish()
     {
         $this->setEndTime(new \DateTime());
@@ -200,6 +236,7 @@ class UpdateLog
      * Set fileTime
      *
      * @param \DateTime $fileTime
+     *
      * @return UpdateLog
      */
     public function setFileTime($fileTime)
@@ -223,6 +260,7 @@ class UpdateLog
      * Set nodesAdded
      *
      * @param integer $nodesAdded
+     *
      * @return UpdateLog
      */
     public function setNodesAdded($nodesAdded)
@@ -246,6 +284,7 @@ class UpdateLog
      * Set nodesRemoved
      *
      * @param integer $nodesRemoved
+     *
      * @return UpdateLog
      */
     public function setNodesRemoved($nodesRemoved)
@@ -269,6 +308,7 @@ class UpdateLog
      * Set nodesPreserved
      *
      * @param integer $nodesPreserved
+     *
      * @return UpdateLog
      */
     public function setNodesPreserved($nodesPreserved)
@@ -292,6 +332,7 @@ class UpdateLog
      * Set statusUpdates
      *
      * @param integer $statusUpdates
+     *
      * @return UpdateLog
      */
     public function setStatusUpdates($statusUpdates)
@@ -315,6 +356,7 @@ class UpdateLog
      * Set linksAdded
      *
      * @param integer $linksAdded
+     *
      * @return UpdateLog
      */
     public function setLinksAdded($linksAdded)
@@ -338,6 +380,7 @@ class UpdateLog
      * Set linksRemoved
      *
      * @param integer $linksRemoved
+     *
      * @return UpdateLog
      */
     public function setLinksRemoved($linksRemoved)
@@ -361,6 +404,7 @@ class UpdateLog
      * Set linksPreserved
      *
      * @param integer $linksPreserved
+     *
      * @return UpdateLog
      */
     public function setLinksPreserved($linksPreserved)
@@ -384,6 +428,7 @@ class UpdateLog
      * Set message
      *
      * @param string $message
+     *
      * @return UpdateLog
      */
     public function setMessage($message)
@@ -407,6 +452,7 @@ class UpdateLog
      * Set fileSize
      *
      * @param integer $fileSize
+     *
      * @return UpdateLog
      */
     public function setFileSize($fileSize)
@@ -430,6 +476,7 @@ class UpdateLog
      * Set startTime
      *
      * @param \DateTime $startTime
+     *
      * @return UpdateLog
      */
     public function setStartTime($startTime)
@@ -453,6 +500,7 @@ class UpdateLog
      * Set endTime
      *
      * @param \DateTime $endTime
+     *
      * @return UpdateLog
      */
     public function setEndTime($endTime)

@@ -20,3 +20,5 @@ parameters:
 
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    json_url: "http://graph.hamburg.freifunk.net/nodes.json"

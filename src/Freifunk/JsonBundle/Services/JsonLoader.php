@@ -5,7 +5,8 @@
  * This command downloads the `.json` file from the remote server.
  * The `.json` file is the base for all further statistic analysis.
  * You should run this command as a cron job every minute.
- * Add the `--dir=/path/` option to specify a directory where you want to store the downloaded files.
+ * Add the `--dir=/path/` option to specify a directory where you
+ * want to store the downloaded files.
  *
  * PHP Version 5
  *
@@ -54,7 +55,8 @@ class JsonLoader
     }
 
     /**
-     * Requests the headers of the `.json` file to check whether or not we need to download it.
+     * Requests the headers of the `.json` file to check
+     * whether or not we need to download it.
      *
      * @param string $dir The directory where to save the output
      * @param string $url The url of the Json file.
@@ -75,8 +77,17 @@ class JsonLoader
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         if ($this->fs->exists($dir . 'latest')) {
-            curl_setopt($curl, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
-            curl_setopt($curl, CURLOPT_TIMEVALUE, file_get_contents($dir . 'latest'));
+            curl_setopt(
+                $curl,
+                CURLOPT_TIMECONDITION,
+                CURL_TIMECOND_IFMODSINCE
+            );
+
+            curl_setopt(
+                $curl,
+                CURLOPT_TIMEVALUE,
+                file_get_contents($dir . 'latest')
+            );
         }
 
         $header = curl_exec($curl);
@@ -85,7 +96,10 @@ class JsonLoader
 
         $filename = $dir . $this->info['filetime'].'.json';
 
-        return ($this->info['http_code'] == 300 || $this->fs->exists($filename)) ? false : true;
+        return (
+            $this->info['http_code'] == 300 ||
+            $this->fs->exists($filename)
+        ) ? false : true;
 
     }
 

@@ -1,0 +1,25 @@
+{#}
+<script>{##}
+(function(){
+var $ = jQuery;
+// insert html onto page
+$("#{{ block('append_id') }}").append($.parseHTML("{{ block('widget_html')|replace({'"': '\\"', '\n': '\\n'})|raw }}"));
+
+// load css if needed
+var cssFiles = [{{ block('css_files')|raw }}];
+var dHead = document.getElementsByTagName('head')[0];
+for (var i = 0; i < cssFiles.length; ++i) {
+    if ($("link[type='text/css'][href='"+cssFiles[i]+"']").length == 0) {
+        var link = document.createElement('link');
+        link.type = 'text/css';
+        link.rel  = 'stylesheet';
+        link.href = '{{ app.request.SchemeAndHttpHost|raw }}' + cssFiles[i];
+        link.media = 'all';
+        dHead.insertBefore(link, dHead.firstChild);
+    }
+}
+
+{% block additional_javascript %}
+{% endblock %}
+
+})();

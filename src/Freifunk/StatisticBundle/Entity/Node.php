@@ -28,7 +28,7 @@ class Node
      *
      * @ORM\Column(name="nodeName", type="string", length=32, nullable=true)
      * @Assert\Length(min=1,max=32)
-     * @Assert\Regex("/^[-a-zA-Z0-9_]*$/")
+     * //@Assert\Regex("/^[-a-zA-Z0-9_]*$/")
      */
     private $nodeName;
 
@@ -55,10 +55,9 @@ class Node
     /**
      * @var string
      *
-     * @ORM\Column(name="mac", type="string", length=17, unique=true)
+     * @ORM\Column(name="mac", type="string", length=40, unique=true)
      * @Assert\NotNull
-     * @Assert\Regex("/^([a-fA-F0-9]{12}|([a-fA-F0-9]{2}:){5}[a-fA-F0-9]{2})$/")
-     * @Assert\Length(max=17)
+     * @Assert\Length(max=40)
      */
     private $mac;
 
@@ -120,11 +119,12 @@ class Node
      * Set mac
      *
      * @param string $mac
+     *
      * @return Node
      */
     public function setMac($mac)
     {
-        $this->mac = strtoupper($mac);
+        $this->mac = sha1(strtoupper($mac));
 
         return $this;
     }
@@ -144,7 +144,7 @@ class Node
     /**
      * Get id
      *
-     * @return integer
+     * @return integer 
      */
     public function getId()
     {
@@ -155,6 +155,7 @@ class Node
      * Set nodeName
      *
      * @param string $nodeName
+     *
      * @return Node
      */
     public function setNodeName($nodeName)
@@ -167,7 +168,7 @@ class Node
     /**
      * Get nodeName
      *
-     * @return string
+     * @return string 
      */
     public function getNodeName()
     {
@@ -178,6 +179,7 @@ class Node
      * Set realName
      *
      * @param string $realName
+     *
      * @return Node
      */
     public function setRealName($realName)
@@ -190,7 +192,7 @@ class Node
     /**
      * Get realName
      *
-     * @return string
+     * @return string 
      */
     public function getRealName()
     {
@@ -201,11 +203,12 @@ class Node
      * Set email
      *
      * @param string $email
+     *
      * @return Node
      */
     public function setEmail($email)
     {
-        $this->email = $email;
+        $this->email = strtolower($email);
 
         return $this;
     }
@@ -223,7 +226,7 @@ class Node
     /**
      * Get mac
      *
-     * @return string
+     * @return string 
      */
     public function getMac()
     {
@@ -234,6 +237,7 @@ class Node
      * Set latitude
      *
      * @param float $latitude
+     *
      * @return Node
      */
     public function setLatitude($latitude)
@@ -246,7 +250,7 @@ class Node
     /**
      * Get latitude
      *
-     * @return float
+     * @return float 
      */
     public function getLatitude()
     {
@@ -257,6 +261,7 @@ class Node
      * Set longitude
      *
      * @param float $longitude
+     *
      * @return Node
      */
     public function setLongitude($longitude)
@@ -269,7 +274,7 @@ class Node
     /**
      * Get longitude
      *
-     * @return float
+     * @return float 
      */
     public function getLongitude()
     {
@@ -280,11 +285,12 @@ class Node
      * Set fastdKey
      *
      * @param string $fastdKey
+     *
      * @return Node
      */
     public function setFastdKey($fastdKey)
     {
-        $this->fastdKey = $fastdKey;
+        $this->fastdKey = strtolower($fastdKey);
 
         return $this;
     }
@@ -303,6 +309,7 @@ class Node
      * Add stats
      *
      * @param \Freifunk\StatisticBundle\Entity\NodeStat $stats
+     *
      * @return Node
      */
     public function addStat(\Freifunk\StatisticBundle\Entity\NodeStat $stats)
@@ -336,6 +343,7 @@ class Node
      * Add targetLinks
      *
      * @param \Freifunk\StatisticBundle\Entity\Link $targetLinks
+     *
      * @return Node
      */
     public function addTargetLink(\Freifunk\StatisticBundle\Entity\Link $targetLinks)
@@ -369,6 +377,7 @@ class Node
      * Add sourceLinks
      *
      * @param \Freifunk\StatisticBundle\Entity\Link $sourceLinks
+     *
      * @return Node
      */
     public function addSourceLink(\Freifunk\StatisticBundle\Entity\Link $sourceLinks)
@@ -402,6 +411,7 @@ class Node
      * Set time
      *
      * @param \DateTime $time
+     *
      * @return Node
      */
     public function setTime($time)

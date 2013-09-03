@@ -22,7 +22,10 @@ Woche: {{ logs_per_week }} (<span class="warning">{{ size_per_hour }}kb</span>)<
     </thead>
     {% for log in logs %}
         <tr>
-            <td>{{ log.endTime | date('Y.m.d \\u\\m H:i:s') }}</td>
+            <td>
+                von {{ log.startTime | date('Y.m.d \\u\\m H:i:s') }}<br />
+                bis {{ log.endTime | date('Y.m.d \\u\\m H:i:s') }}
+            </td>
             <td>{{ log.filetime | date('Y.m.d \\u\\m H:i:s') }}</td>
             <td>{{ log.fileSize }}</td>
             <td>

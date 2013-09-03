@@ -45,20 +45,6 @@ class Widget
     private $timestamp;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="ip", type="string", length=255)
-     */
-    private $ip;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="useragent", type="string", length=255)
-     */
-    private $userAgent;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -125,28 +111,6 @@ class Widget
     }
 
     /**
-     * Set the IP
-     *
-     * @param string $ip
-     *
-     * @return Widget
-     */
-    public function setIp($ip)
-    {
-        $this->ip = $ip;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getIp()
-    {
-        return $this->ip;
-    }
-
-    /**
      * Set the timestamp
      *
      * @param \DateTime $timestamp
@@ -166,28 +130,6 @@ class Widget
     public function getTimestamp()
     {
         return $this->timestamp;
-    }
-
-    /**
-     * Set user agent
-     *
-     * @param string $userAgent
-     *
-     * @return Widget
-     */
-    public function setUserAgent($userAgent)
-    {
-        $this->userAgent = $userAgent;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUserAgent()
-    {
-        return $this->userAgent;
     }
 
 }

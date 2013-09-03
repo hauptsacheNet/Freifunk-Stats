@@ -46,8 +46,6 @@ class WidgetLogListener
 
             $widget->setRequest($request->getUri());
             $widget->setReferer($request->headers->get('referer'));
-            $widget->setIp($request->getClientIp());
-            $widget->setUserAgent($request->headers->get('user-agent'));
 
             // todo: reactivate this!!!
             //$this->manager->persist($widget);

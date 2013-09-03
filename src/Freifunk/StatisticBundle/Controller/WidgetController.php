@@ -92,18 +92,18 @@ class WidgetController extends Controller
             $request->query->get('node')
         );
 
-        if ($node) {
-            $stats = $this->statRepository->getLastStatOf($node);
-            $clients = $stats->getClientCount();
-
-            return array(
-                'node' => $node,
-                'clients' => $clients,
-                'append_id' => $id
-            );
+        if (!$node) {
+            throw $this->createNotFoundException('Knoten nicht gefunden');
         }
 
-        return $this->createNotFoundException('Knoten nicht gefunden');
+        $stats = $this->statRepository->getLastStatOf($node);
+        $clients = $stats->getClientCount();
+
+        return array(
+            'node' => $node,
+            'clients' => $clients,
+            'append_id' => $id
+        );
     }
 
     /**
@@ -122,14 +122,13 @@ class WidgetController extends Controller
             'nodeName' => $nodeName
         ));
 
-        if ($node) {
-
-            return array(
-                'node' => $node
-            );
+        if (!$node) {
+            throw $this->createNotFoundException('Knoten nicht gefunden');
         }
 
-        return $this->createNotFoundException('Knoten nicht gefunden');
+        return array(
+            'node' => $node
+        );
     }
 
     /**

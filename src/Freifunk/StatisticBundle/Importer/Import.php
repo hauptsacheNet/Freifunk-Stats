@@ -24,7 +24,8 @@ use Freifunk\StatisticBundle\Service\JsonImporter;
 use Symfony\Component\Validator\Validator;
 
 /**
- * This class represents an import action. This means it should be created for one import only.
+ * This class represents an import action.
+ * This means it should be created for one import only.
  *
  * @package Freifunk\StatisticBundle\Importer
  */
@@ -59,6 +60,15 @@ class Import
     /** @var NodeStat[] */
     private $statsToAdd = array();
 
+    /**
+     * Constructor
+     *
+     * @param EntityManager $em
+     * @param Validator     $validator
+     * @param string        $string
+     *
+     * @return Import
+     */
     public function __construct(EntityManager $em, Validator $validator, $string)
     {
         $this->em = $em;
@@ -70,6 +80,11 @@ class Import
         $this->string = $string;
     }
 
+    /**
+     * Executes the importer
+     *
+     * @return UpdateLog
+     */
     public function execute()
     {
         // create log
@@ -79,11 +94,17 @@ class Import
             // prepare the data our of the resource
             $this->log->setFileSize(strlen($this->string));
             if ($this->log->getFileSize() == 0) {
-                throw new ImportException(null, 'The given json string is empty');
+                throw new ImportException(
+                    null,
+                    'The given json string is empty'
+                );
             }
             $this->data = json_decode($this->string, true);
             if ($this->data === null) {
-                throw new ImportException(null, 'The JSON was not well formated (' . json_last_error() . ')');
+                throw new ImportException(
+                    null,
+                    'The JSON was not well formated (' . json_last_error() . ')'
+                );
             }
 
             $this->testData($this->data, array(
@@ -95,7 +116,7 @@ class Import
             $this->handleMetaData();
 
             $this->parseNodes();
-            $this->cleanupDatabaseNodes();
+            //$this->cleanupDatabaseNodes();
             $this->importNodes();
             $this->em->flush();
 
@@ -112,6 +133,7 @@ class Import
         $this->em->persist($this->log);
         $this->em->flush();
         $this->em->clear();
+
         return $this->log;
     }
 
@@ -197,6 +219,7 @@ class Import
      * Creates a node instances of the json part
      *
      * @param array $data
+     *
      * @return Node
      */
     private function createNodeInstance(array $data)
@@ -223,12 +246,13 @@ class Import
         $status = new NodeStat();
         $status->setTime($this->log->getFileTime());
         $status->setNode($node);
-        $status->setOnline((bool)$data['flags']['online']);
+        $status->setOnline((bool) $data['flags']['online']);
         $status->setClientCount(count(explode(', ', $data['macs'])));
         $this->validate($status);
         $node->addStat($status);
 
         $this->validate($node);
+
         return $node;
     }
 
@@ -297,7 +321,9 @@ class Import
      * Creates a Link instance out of the json part
      *
      * @param array $data
+     *
      * @return Link
+     *
      * @throws ImportException
      */
     private function createLinkInstance(array $data)
@@ -314,8 +340,9 @@ class Import
         $link->setOpenTime($this->log->getFileTime());
 
         //list($idSource, $idTarget) = explode('-', strtoupper($data['id']));
-        $target = strtoupper(@$this->data['nodes'][$data['target']]['id']);
-        $source = strtoupper(@$this->data['nodes'][$data['source']]['id']);
+        $target = sha1(strtoupper(@$this->data['nodes'][$data['target']]['id']));
+        $source = sha1(strtoupper(@$this->data['nodes'][$data['source']]['id']));
+
         if (array_key_exists($target, $this->nodesInFile) && array_key_exists($source, $this->nodesInFile)) {
             $link->setTarget($this->nodesInFile[$target]);
             $link->setSource($this->nodesInFile[$source]);
@@ -330,6 +357,7 @@ class Import
         $link->setQuality($data['quality']);
 
         $this->validate($link);
+
         return $link;
     }
 
@@ -366,7 +394,7 @@ class Import
             $qb->andWhere($expr);
         }
         $qb->andWhere($qb->expr()->isNull('l.closeTime'));
-        $qb->set('l.closeTime', $qb->expr()->literal(date('Y-m-d H:i:s')));
+        $qb->set('l.closeTime', $qb->expr()->literal($this->log->getFileTime()->format('Y-m-d H:i:s')));
         $this->log->setLinksRemoved($qb->getQuery()->execute());
     }
 
@@ -398,8 +426,10 @@ class Import
     }
 
     /**
-     * @param array $data
+     * @param array &$data
+     *
      * @param array $keys
+     *
      * @throws ImportException
      */
     private static function testData(array &$data, array $keys)
@@ -413,7 +443,8 @@ class Import
     }
 
     /**
-     * @param $entity
+     * @param Object $entity
+     *
      * @throws ImportException
      */
     private function validate($entity)

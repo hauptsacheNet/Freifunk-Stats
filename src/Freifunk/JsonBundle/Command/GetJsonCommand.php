@@ -5,7 +5,8 @@
  * This command downloads the `.json` file from the remote server.
  * The `.json` file is the base for all further statistic analysis.
  * You should run this command as a cron job every minute.
- * Add the `--dir=/path/` option to specify a directory where you want to store the downloaded files.
+ * Add the `--dir=/path/` option to specify a directory where you want
+ * to store the downloaded files.
  *
  * PHP Version 5
  *
@@ -41,8 +42,14 @@ class GetJsonCommand extends ContainerAwareCommand
     {
         $this
             ->setName('freifunk:get-json')
-            ->setDescription('Downloads the newest .json file from the servers.')
-            ->addOption('dir', null, InputOption::VALUE_OPTIONAL, 'The path where the .json should be saved.', '');
+            ->setDescription('Downloads the newest .json file.')
+            ->addOption(
+                'dir',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'The path where the .json should be saved.',
+                ''
+            );
     }
 
     /**
@@ -64,7 +71,7 @@ class GetJsonCommand extends ContainerAwareCommand
             $name = $jsonLoader->saveJson($dir);
             $output->writeln('Json file saved to '.$name);
         } catch (IOException $e) {
-            $output->writeln('Could not write the file. Do you have permissions?');
+            $output->writeln('Could not write the file.');
         }
     }
 

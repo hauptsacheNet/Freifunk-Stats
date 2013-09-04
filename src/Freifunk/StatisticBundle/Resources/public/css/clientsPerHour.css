@@ -1,0 +1,36 @@
+.freifunk-cph-widget {
+    position: relative;
+    width: 25em;
+    height: 10em;
+    overflow: hidden;
+    background: #ffcb05; /* Old browsers */
+}
+
+.freifunk-cph-widget .freifunk-facts {
+    position: absolute;
+    right: 0;
+    width: 7.5em;
+    height: 100%;
+    background-position: 0em -2em;
+    background-repeat: no-repeat;
+}
+
+.freifunk-cph-widget .freifunk-chart {
+    width: 25em;
+    height: 100%;
+    margin-top: 2em;
+}
+
+.freifunk-cph-widget a.freifunk-title {
+    position: absolute;
+    text-align: right;
+    right: 6.7em;
+    margin: .3em 0;
+    width: 14em;
+    z-index: 1;
+    font-family: Arial, sans-serif;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+}

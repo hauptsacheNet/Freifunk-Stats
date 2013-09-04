@@ -39,7 +39,9 @@ class JsonLoaderTest extends WebTestCase
         $fs->mkdir('/tmp/testCheckHeader/');
 
         $client = static::createClient();
-        $jsonLoader = new JsonLoader($client->getContainer()->getParameter('json_url'));
+        $jsonLoader = new JsonLoader(
+            $client->getContainer()->getParameter('json_url')
+        );
 
         $this->assertTrue($jsonLoader->checkHeader('/tmp/testCheckHeader/'));
 

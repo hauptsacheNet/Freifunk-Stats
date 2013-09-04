@@ -87,6 +87,11 @@ class Link
         return $this->getTarget()->getMac() . '-' . $this->getSource()->getMac();
     }
 
+    /**
+     * Constructor
+     *
+     * @return Link
+     */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
@@ -106,6 +111,7 @@ class Link
      * Set type
      *
      * @param integer $type
+     *
      * @return Link
      */
     public function setType($type)
@@ -129,6 +135,7 @@ class Link
      * Set createdAt
      *
      * @param \DateTime $createdAt
+     *
      * @return Link
      */
     public function setCreatedAt($createdAt)
@@ -152,6 +159,7 @@ class Link
      * Set source
      *
      * @param \Freifunk\StatisticBundle\Entity\Node $source
+     *
      * @return Link
      */
     public function setSource(\Freifunk\StatisticBundle\Entity\Node $source = null)
@@ -175,6 +183,7 @@ class Link
      * Set target
      *
      * @param \Freifunk\StatisticBundle\Entity\Node $target
+     *
      * @return Link
      */
     public function setTarget(\Freifunk\StatisticBundle\Entity\Node $target = null)
@@ -198,6 +207,7 @@ class Link
      * Set quality
      *
      * @param string $quality
+     *
      * @return Link
      */
     public function setQuality($quality)
@@ -221,6 +231,7 @@ class Link
      * Set openTime
      *
      * @param \DateTime $openTime
+     *
      * @return Link
      */
     public function setOpenTime($openTime)
@@ -244,6 +255,7 @@ class Link
      * Set closeTime
      *
      * @param \DateTime $closeTime
+     *
      * @return Link
      */
     public function setCloseTime($closeTime)

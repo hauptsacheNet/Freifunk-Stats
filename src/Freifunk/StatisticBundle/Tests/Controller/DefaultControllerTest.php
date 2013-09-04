@@ -18,7 +18,7 @@ class DefaultControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/');
+        $crawler = $client->request('GET', '/stats');
 
         $this->assertTrue(
             $crawler->filter(

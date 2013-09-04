@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Statistik für {{ node.nodeName }}</title>
-        <script type="text/javascript" src="http://freifunk.site/app_localdev.php/js/widget"></script>
+        <script type="text/javascript" src="{{ path('widget_js') }}"></script>
     </head>
     <body>
         <div data-freifunk-widget="clients" data-freifunk-names="{{ node.nodeName }}"></div>

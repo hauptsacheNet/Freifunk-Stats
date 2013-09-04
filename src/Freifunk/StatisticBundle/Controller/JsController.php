@@ -24,7 +24,7 @@ class JsController extends Controller
      *
      * @return $response
      *
-     * @Route("/widget")
+     * @Route("/widget", name="widget_js")
      */
     public function widgetJsAction(Request $request)
     {

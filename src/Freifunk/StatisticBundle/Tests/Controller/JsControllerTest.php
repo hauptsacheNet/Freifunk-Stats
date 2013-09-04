@@ -12,6 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class JsControllerTest extends WebTestCase
 {
 
+    /**
+     * Test widget javascript generation
+     */
     public function testJsGeneration()
     {
         $client = static::createClient();
@@ -20,11 +23,5 @@ class JsControllerTest extends WebTestCase
         $response = $client->getResponse();
 
         $this->assertTrue($response->isSuccessful());
-        $this->assertTrue(
-            $response->headers->contains(
-                'Content-Type',
-                'text/javascript'
-            )
-        );
     }
 }

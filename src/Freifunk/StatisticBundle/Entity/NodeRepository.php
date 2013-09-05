@@ -64,7 +64,7 @@ class NodeRepository extends EntityRepository
     public function countAllNodes()
     {
         $manager = $this->getEntityManager();
-        $query = $manager->createQuery('SELECT COUNT(n.id) FROM FreifunkStatisticBundle:Node n');
+        $query = $manager->createQuery('SELECT COUNT(n.id) FROM FreifunkStatisticBundle:Node n WHERE n.nodeName IS NOT NULL');
         $count = $query->getSingleScalarResult();
 
         return $count;

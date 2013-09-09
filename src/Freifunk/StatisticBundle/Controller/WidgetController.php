@@ -28,7 +28,7 @@ class WidgetController extends Controller
     private $linkRepository;
 
     /**
-     * {@inheritDocs}
+     * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {

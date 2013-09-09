@@ -53,6 +53,7 @@ class NodeRepository extends EntityRepository
         foreach ($nodes as $node) {
             $result[$node->getNodeName()] = $node;
         }
+
         return $result;
     }
 
@@ -80,14 +81,14 @@ class NodeRepository extends EntityRepository
      */
     public function findDuplicateNodes($nodeName, $macs)
     {
-        $hashed_macs = array_map(function($value) {
+        $hashedMacs = array_map(function($value) {
             return sha1(strtoupper($value));
         }, $macs);
 
         $qb = $this->createQueryBuilder('n');
         $qb->andWhere($qb->expr()->eq('n.nodeName', '?1'));
         $qb->andWhere($qb->expr()->in(
-            'n.mac', $hashed_macs
+            'n.mac', $hashedMacs
         ));
 
         $qb->setParameter(1, $nodeName);

@@ -28,7 +28,7 @@ class WidgetController extends Controller
     private $linkRepository;
 
     /**
-     * Like __construct()
+     * {@inheritDocs}
      */
     public function setContainer(ContainerInterface $container = null)
     {
@@ -83,6 +83,7 @@ class WidgetController extends Controller
             '#c42525',
             '#a6c96a'
         );
+
         return $chart;
     }
 
@@ -91,7 +92,7 @@ class WidgetController extends Controller
      * Example request: `/test/div?node=<nodeName>
      *
      * @param Request $request
-     * @param string $id
+     * @param string  $id
      *
      * @return array
      *
@@ -151,7 +152,7 @@ class WidgetController extends Controller
      * the nodes over the selected period of time.
      *
      * @param Request $request
-     * @param int $id
+     * @param string  $id
      *
      * @return array
      *

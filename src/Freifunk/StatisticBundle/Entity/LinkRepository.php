@@ -34,7 +34,7 @@ class LinkRepository extends EntityRepository
     /**
      * Returns the number of links for a node between 2 dates
      *
-     * @param Node $node
+     * @param Node      $node
      * @param \DateTime $start
      * @param \DateTime $end
      *
@@ -57,13 +57,13 @@ class LinkRepository extends EntityRepository
                 4 => Link::CLIENT
             ));
 
-        return (int)$query->getSingleScalarResult();
+        return (int) $query->getSingleScalarResult();
     }
 
     /**
      * Returns the number of unique     links for a node between 2 dates
      *
-     * @param Node $node
+     * @param Node      $node
      * @param \DateTime $start
      * @param \DateTime $end
      *
@@ -86,13 +86,19 @@ class LinkRepository extends EntityRepository
                 4 => Link::CLIENT
             ));
 
-        return (int)$query->getSingleScalarResult();
+        return (int) $query->getSingleScalarResult();
     }
 
     /**
+     * Computes all links for a timeline widget:
+     *
      * @param Node|Node[] $nodes
-     * @param string $steps
-     * @param string $format
+     * @param string      $steps
+     * @param string      $format
+     *
+     * @return array
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function computeLinkTimeline($nodes, $steps = '1 hour', $format = 'Y-m-d H:00:00')
     {
@@ -146,6 +152,7 @@ class LinkRepository extends EntityRepository
             $stat = count($stat);
         }
         ksort($stats);
+
         return $stats;
     }
 }

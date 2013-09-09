@@ -97,10 +97,10 @@ class ImportJsonCommandTest extends WebTestCase
         $result = $commandTester->getDisplay();
         $this->assertRegExp(
             '/nodes\\(new: ' . $nodeUpdates[0] . ', preserved: '
-                . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
-                . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: '
-                . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
-                . '\\nalso there were ' . $statusUpdates . ' status updates$/',
+            . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
+            . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: '
+            . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
+            . '\\nalso there were ' . $statusUpdates . ' status updates$/',
             $result
         );
 

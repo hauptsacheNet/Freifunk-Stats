@@ -84,7 +84,7 @@ class NodeRepository extends EntityRepository
             return sha1(strtoupper($value));
         }, $macs);
 
-        $qb = $this->nodeRep->createQueryBuilder('n');
+        $qb = $this->createQueryBuilder('n');
         $qb->andWhere($qb->expr()->eq('n.nodeName', '?1'));
         $qb->andWhere($qb->expr()->in(
             'n.mac', $hashed_macs

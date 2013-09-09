@@ -224,6 +224,7 @@ class Import
      */
     private function createNodeInstance(array $data)
     {
+
         $this->testData($data, array(
             'flags' => 'array',
             'geo' => null,
@@ -232,6 +233,22 @@ class Import
             'name' => 'string'
         ));
 
+        // first check if the node is already in db and only the MAC changed:
+        if ($data['name']) {
+            $dbNode = $this->nodeRep->findDuplicateNodes($data['name'], explode(', ', $data['macs']));
+
+            if (!is_null($dbNode)) {
+                // still update the MAC to find the correct new links:
+                $dbNode->setMac($data['id']);
+
+                $this->validate($dbNode);
+                $this->em->persist($dbNode);
+
+                return $dbNode;
+            }
+        }
+
+        // add this as a new node:
         $node = new Node();
         $node->setTime($this->log->getFileTime());
         $node->setNodeName($data['name'] != '' ? $data['name'] : null);

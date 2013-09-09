@@ -70,4 +70,28 @@ class NodeRepository extends EntityRepository
         return $count;
     }
 
+    /**
+     * Returns a node that is a duplicate to the give one but with a changed mac
+     *
+     * @param string $nodeName Name of the node
+     * @param array  $macs     Array of MACs this node might have.
+     *
+     * @return mixed
+     */
+    public function findDuplicateNodes($nodeName, $macs)
+    {
+        $hashed_macs = array_map(function($value) {
+            return sha1(strtoupper($value));
+        }, $macs);
+
+        $qb = $this->nodeRep->createQueryBuilder('n');
+        $qb->andWhere($qb->expr()->eq('n.nodeName', '?1'));
+        $qb->andWhere($qb->expr()->in(
+            'n.mac', $hashed_macs
+        ));
+
+        $qb->setParameter(1, $nodeName);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
 }

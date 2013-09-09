@@ -60,14 +60,14 @@ class ImportJsonCommandTest extends WebTestCase
             ),
             array(
                 __DIR__ . "/TestFiles/document 2.json",
-                array(0, 8, 2),
+                array(0, 8, 0),
                 array(0, 1, 0),
                 0
             ),
             array(
                 __DIR__ . "/TestFiles/document 3.json",
-                array(0, 0, 8),
                 array(0, 0, 0),
+                array(0, 0, 1),
                 0
             )
         );

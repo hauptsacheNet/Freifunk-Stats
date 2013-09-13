@@ -27,6 +27,9 @@ class WidgetController extends Controller
     /** @var LinkRepository */
     private $linkRepository;
 
+    /**
+     * {@inheritdoc}
+     */
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
@@ -42,6 +45,16 @@ class WidgetController extends Controller
         );
     }
 
+    /**
+     * Generates a basic hightchart
+     *
+     * @param string $xTitle Title of the x axis
+     * @param string $yTitle Title of the y axis
+     * @param string $accent Colors
+     * @param string $text   Text colors
+     *
+     * @return Hightchart
+     */
     private function createHighChart($xTitle, $yTitle, $accent = '#E0266B', $text = '#000')
     {
         $chart = new Highchart();
@@ -70,6 +83,7 @@ class WidgetController extends Controller
             '#c42525',
             '#a6c96a'
         );
+
         return $chart;
     }
 
@@ -78,7 +92,7 @@ class WidgetController extends Controller
      * Example request: `/test/div?node=<nodeName>
      *
      * @param Request $request
-     * @param string $id
+     * @param string  $id
      *
      * @return array
      *
@@ -107,6 +121,8 @@ class WidgetController extends Controller
     }
 
     /**
+     * Creates a hotlink to all nodes in the db for deep-linking
+     *
      * @param Request $request
      * @param string  $nodeName
      *
@@ -136,7 +152,7 @@ class WidgetController extends Controller
      * the nodes over the selected period of time.
      *
      * @param Request $request
-     * @param int $id
+     * @param string  $id
      *
      * @return array
      *

@@ -60,14 +60,14 @@ class ImportJsonCommandTest extends WebTestCase
             ),
             array(
                 __DIR__ . "/TestFiles/document 2.json",
-                array(0, 8, 2),
+                array(0, 8, 0),
                 array(0, 1, 0),
                 0
             ),
             array(
                 __DIR__ . "/TestFiles/document 3.json",
-                array(0, 0, 8),
                 array(0, 0, 0),
+                array(0, 0, 1),
                 0
             )
         );
@@ -97,10 +97,10 @@ class ImportJsonCommandTest extends WebTestCase
         $result = $commandTester->getDisplay();
         $this->assertRegExp(
             '/nodes\\(new: ' . $nodeUpdates[0] . ', preserved: '
-                . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
-                . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: '
-                . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
-                . '\\nalso there were ' . $statusUpdates . ' status updates$/',
+            . $nodeUpdates[1] . ', removed: ' . $nodeUpdates[2] . '\\)'
+            . '\\nlinks\\(new: ' . $linkUpdates[0] . ', preserved: '
+            . $linkUpdates[1] . ', removed: ' . $linkUpdates[2] . '\\)'
+            . '\\nalso there were ' . $statusUpdates . ' status updates$/',
             $result
         );
 
